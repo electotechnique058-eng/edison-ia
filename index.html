@@ -213,7 +213,7 @@ let voiceOn=false;try{voiceOn=localStorage.getItem("edison_voice")==="1"}catch(e
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,listening=false;
 function paintVoice(){$("spk").textContent=voiceOn?"🔊":"🔇";$("spk").setAttribute("aria-label",voiceOn?"Couper la voix d’Edison":"Activer la voix d’Edison");$("mic").textContent=listening?"🔴":"🎤"}
 function setVoice(v){voiceOn=v;try{localStorage.setItem("edison_voice",v?"1":"0")}catch(e){}if(!v&&window.speechSynthesis)speechSynthesis.cancel();paintVoice()}
-function speak(txt){if(!voiceOn||!window.speechSynthesis)return;const s=String(txt).replace(/\(Source[^)]*\)/g,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").replace(/[•\n]+/g,". ").trim();if(!s)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang="fr-FR";const v=speechSynthesis.getVoices().find(x=>/^fr/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}
+function speak(txt){if(!voiceOn||!window.speechSynthesis)return;const s=String(txt).replace(/\(Source[^)]*\)/g,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").replace(/[•\n]+/g,". ").replace(/ahod[eéè]d[eéè]/gi,"Aodédè").trim();if(!s)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang="fr-FR";const v=speechSynthesis.getVoices().find(x=>/^fr/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}
 $("spk").addEventListener("click",()=>setVoice(!voiceOn));
 $("mic").addEventListener("click",()=>{
 if(!SR){add("e","La reconnaissance vocale n’est pas disponible sur ce navigateur. Essaie avec Chrome sur Android.");return}
