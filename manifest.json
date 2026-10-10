@@ -1,6 +1,6 @@
 {
   "name": "Edison IA",
-  "short_name": "Edison",
+  "short_name": "Edison IA",
   "description": "Assistant francophone : électrotechnique, énergie, code et culture générale",
   "lang": "fr",
   "start_url": "./index.html",
