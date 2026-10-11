@@ -160,6 +160,40 @@ const KB=[
 ["rodriguez paul|paul rodriguez|qui est rodriguez paul|qui est paul rodriguez","Rodriguez Paul est une personne qui a fait le BTP (bâtiment et travaux publics) et le génie civil. C'est quelqu'un qui fait un excellent travail."]
 ].map(([k,v])=>[k.split("|").map(N),v]);
 
+/* ===== SCHÉMA SOLAIRE ILLUSTRÉ (dessiné par le code, ajustable) ===== */
+function schemaSolaire(t){
+ if(!/solaire|photovolta|panneaux?/.test(t))return null;
+ const mots={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6},m=t.match(/\b(\d+|un|une|deux|trois|quatre|cinq|six)\s+panneaux?/);
+ let n=m?(+m[1]||mots[m[1]]):3;const trop=n>6;n=Math.max(1,Math.min(6,n||3));
+ const ond=!/sans onduleur|courant continu seulement|uniquement en continu|sans 230/.test(t),R="#d32f2f",K="currentColor";let s="";
+ const ln=(p,c,d)=>{s+='<polyline points="'+p+'" fill="none" stroke="'+c+'" stroke-width="2"'+(d?' stroke-dasharray="4 3"':'')+'/>'};
+ const dot=(x,y,c)=>{s+='<circle cx="'+x+'" cy="'+y+'" r="2.6" fill="'+c+'"/>'};
+ const tx=(x,y,str,sz,a,c,b)=>{s+='<text x="'+x+'" y="'+y+'" font-size="'+sz+'" text-anchor="'+(a||"middle")+'" fill="'+(c||K)+'"'+(b?' font-weight="bold"':'')+'>'+str+'</text>'};
+ const pw=34,gp=6,tot=n*pw+(n-1)*gp,x0=150-tot/2,rx=[],kx=[];
+ tx(150,15,"Panneaux solaires ("+n+")",11);
+ for(let i=0;i<n;i++){const x=x0+i*(pw+gp),cx=x+pw/2;
+  s+='<rect x="'+x+'" y="26" width="'+pw+'" height="50" rx="2" fill="#1c2b4a" stroke="#7a8cb3"/>';
+  for(let j=1;j<3;j++)s+='<line x1="'+(x+j*pw/3)+'" y1="26" x2="'+(x+j*pw/3)+'" y2="76" stroke="#4c5f8a"/>';
+  for(let j=1;j<5;j++)s+='<line x1="'+x+'" y1="'+(26+j*10)+'" x2="'+(x+pw)+'" y2="'+(26+j*10)+'" stroke="#4c5f8a"/>';
+  ln((cx-7)+",76 "+(cx-7)+",96",R);ln((cx+7)+",76 "+(cx+7)+",108",K);dot(cx-7,96,R);dot(cx+7,108,K);rx.push(cx-7);kx.push(cx+7)}
+ ln(Math.min(...rx,170)+",96 "+Math.max(...rx,170)+",96",R);ln(Math.min(...kx,150)+",108 "+Math.max(...kx,150)+",108",K);
+ ln("170,96 170,150",R);ln("150,108 150,150",K);
+ s+='<rect x="120" y="150" width="120" height="70" rx="6" fill="#1f2a44" stroke="#8da0cc"/><rect x="150" y="160" width="60" height="22" rx="2" fill="#8fd3ff"/>';
+ tx(180,205,"MPPT",13,"middle","#fff",1);tx(112,180,"Contrôleur",10,"end");tx(112,192,"de charge MPPT",10,"end");
+ ln("240,168 296,168 296,153",R);ln("240,198 304,198 304,153",K);
+ s+='<circle cx="300" cy="132" r="14" fill="#ffe27a" stroke="#b58900"/><rect x="294" y="145" width="12" height="8" fill="#888"/>';tx(300,110,"Charge DC",10);
+ ln("170,220 170,248",R);s+='<rect x="164" y="248" width="12" height="18" fill="#fff" stroke="'+R+'"/>';ln("170,250 170,264",R);tx(182,254,"Fusible",10,"start");
+ ln("170,266 170,284 190,284 190,294",R);ln("150,220 150,288 130,288 130,294",K);
+ s+='<rect x="100" y="294" width="120" height="48" rx="4" fill="#37474f" stroke="#90a4ae"/><rect x="184" y="289" width="12" height="5" fill="'+R+'"/><rect x="124" y="289" width="12" height="5" fill="#222"/>';
+ tx(160,322,"BATTERIE",12,"middle","#fff",1);tx(190,308,"+",12,"middle","#fff",1);tx(130,308,"−",12,"middle","#fff",1);
+ if(ond){dot(190,284,R);ln("190,284 224,284",R);s+='<circle cx="234" cy="284" r="10" fill="'+R+'"/><line x1="228" y1="290" x2="240" y2="279" stroke="#fff" stroke-width="3"/>';
+  tx(234,262,"Interrupteur",8);tx(234,271,"batterie",8);ln("244,284 262,284",R);dot(130,288,K);ln("130,288 90,288 90,350 250,350 250,304 262,304",K);
+  s+='<rect x="262" y="266" width="78" height="50" rx="5" fill="#c62828" stroke="#7f0000"/>';tx(301,288,"Onduleur",11,"middle","#fff",1);tx(301,303,"12 V → 230 V",9,"middle","#fff");
+  ln("280,266 280,243",K,1);ln("322,266 322,243",K,1);s+='<rect x="262" y="205" width="78" height="38" rx="4" fill="#cfd8dc" stroke="#78909c"/>';tx(301,225,"Charge AC",10,"middle","#263238",1);tx(301,237,"230 V",9,"middle","#263238")}
+ ln("10,378 28,378",R);tx(33,382,"plus (+)",10,"start");ln("92,378 110,378",K);tx(115,382,"moins (−)",10,"start");
+ const cap="Schéma de principe : panneaux (en parallèle) → contrôleur MPPT → batterie (avec fusible)"+(ond?" → interrupteur → onduleur → charge AC. ":". ")+"La charge DC se branche directement sur le contrôleur. Rouge = plus, noir = moins."+(trop?" J’ai dessiné 6 panneaux au maximum.":"")+"\nLes câbles, fusibles et disjoncteurs se dimensionnent selon la puissance de l’installation. Coupe l’interrupteur avant d’intervenir : les panneaux restent sous tension en plein jour.";
+ return {t:"Installation solaire autonome",svg:'<svg viewBox="0 0 360 392" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;height:auto;font-family:inherit">'+s+'</svg>',cap:cap}}
+
 /* ===== MODULE COMMERCIAL (facultatif : seulement avec l'accord de l'utilisateur ou sur demande directe) ===== */
 const COM={whatsapp:"0192905062",email:"electrotechnique058@gmail.com",adresse:"Abomey, Bénin (adresse exacte à préciser)",zone:"Abomey, Bohicon et leurs environs",
  s:{elec:"installations électriques",cablage:"câblage électrique et tableaux électriques",maint:"maintenance électrique et industrielle",solaire:"installations solaires",video:"installation de systèmes de vidéosurveillance",eclairage:"éclairage et solutions d’économie d’énergie"}};
@@ -416,7 +450,7 @@ cap:"Le va-et-vient allume ou éteint une lampe depuis deux endroits. La phase L
 svg:svgW(340,250,[bx(30,6,140,24,"Panneaux solaires"),ln(100,30,100,46),bx(30,46,140,24,"Protection DC"),ln(100,70,100,86),bx(30,86,140,24,"Régulateur de charge"),ln(100,110,100,126),bx(30,126,140,24,"Batterie"),ln(100,150,100,166),bx(30,166,140,24,"Protection batterie"),ln(100,190,100,206),bx(30,206,140,24,"Onduleur"),ln(170,98,210,98),bx(210,86,120,24,"Charges DC"),ln(170,218,210,218),bx(210,206,120,24,"Charges 230 V AC")].join("")),
 cap:"Système solaire autonome, en blocs : panneaux, protection DC, régulateur de charge, batterie, protection, onduleur, puis appareils en 230 V. Les appareils en courant continu se branchent sur la sortie du régulateur. Respecte la polarité (+ rouge, − noir), choisis la section des câbles selon le courant et mets l’installation à la terre."}
 ];
-function schemaFor(t){if(!/\b(schema|schemas|dessin|dessine|dessiner|circuit|cablage|branchement|montage|plan)\b/.test(t))return null;const s=SCH.find(x=>x.k.some(k=>has(t,k)));if(s)return s;if(/\b(schema|schemas|dessin|dessine|dessiner)\b/.test(t))return {t:"",svg:"",cap:"Je peux te montrer ces schémas : démarrage direct, étoile-triangle, va-et-vient et installation solaire. Lequel veux-tu ?"};return null}
+function schemaFor(t){if(!/\b(schema|schemas|dessin|dessine|dessiner|circuit|cablage|branchement|montage|plan)\b/.test(t))return null;const sol=schemaSolaire(t);if(sol)return sol;const s=SCH.find(x=>x.k.some(k=>has(t,k)));if(s)return s;if(/\b(schema|schemas|dessin|dessine|dessiner)\b/.test(t))return {t:"",svg:"",cap:"Je peux te montrer ces schémas : démarrage direct, étoile-triangle, va-et-vient et installation solaire. Lequel veux-tu ?"};return null}
 async function rechercheEnLigne(q){
 const s=q.replace(/[?!.]/g," ").replace(/^\s*(c est quoi|c’est quoi|qu est ce que|qu’est-ce que|qui est|qui était|explique[- ]moi|parle[- ]moi de)\s+/i,"").trim();
 const j=await (await fetch("https://fr.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=1&srsearch="+encodeURIComponent(s))).json();
