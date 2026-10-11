@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Edison IA — Assistant intelligent</title>
+<title>Novi IA — Assistant intelligent</title>
 <style>
 :root{--bg:#eef3fa;--card:#ffffff;--tx:#14202e;--mut:#5b6b7d;--ac:#1769e0;--ac2:#e6efff;--me:#1769e0;--mt:#fff;--bd:#d7e1ee;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -32,33 +32,69 @@ form button{min-height:48px}
 #memoryPanel button{border:1px solid var(--bd);background:var(--ac2);color:var(--ac);border-radius:10px;padding:8px 10px;font:inherit;cursor:pointer}
 #memoryPanel #clearMemory{border-color:#d66;background:transparent;color:#c44}
 form button{border:0;background:var(--ac);color:#fff;border-radius:999px;padding:0 20px;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 4px 10px #1769e033}
-#mic,#spk,#cam{padding:0 13px;background:var(--ac2);color:var(--ac);border:1px solid var(--bd);box-shadow:none;font-size:1.15rem}
+#mic,#spk,#cam,#call{padding:0 13px;background:var(--ac2);color:var(--ac);border:1px solid var(--bd);box-shadow:none;font-size:1.15rem}
 .b svg{width:100%;max-width:420px;height:auto;display:block;margin:6px 0}
 .note{padding:0 16px 12px;color:var(--mut);font-size:.75rem;text-align:center}
+
+#auth{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at top,#1d4f9e 0,#0d2a55 70%);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+#auth[hidden]{display:none}
+.ab{width:100%;max-width:380px;background:var(--card);color:var(--tx);border-radius:22px;padding:26px 22px;text-align:center;box-shadow:0 18px 50px #0006}
+.ab h2{margin:0;font-size:1.7rem}.ab h2 span{color:var(--ac)}
+.at{margin:4px 0 20px;color:var(--mut)}
+.ab button.big{display:block;width:100%;margin:10px 0;padding:14px;border:0;border-radius:999px;background:var(--ac);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.ab button.big.alt{background:var(--ac2);color:var(--ac);border:1px solid var(--bd)}
+.ab button.lnk{border:0;background:none;color:var(--ac);font:inherit;cursor:pointer;text-decoration:underline;padding:8px}
+.ab label{display:block;text-align:left;margin:10px 0 0;font-size:.9rem;color:var(--mut)}
+.ab label input{width:100%;margin-top:4px;color:var(--tx)}
+.ab label.chk{display:flex;align-items:center;gap:8px}.ab label.chk input{width:auto;margin:0}
+#aErr{min-height:1.3em;margin:8px 0;color:#c62828;font-size:.9rem}
+.an{margin:14px 0 0;font-size:.75rem;color:var(--mut)}
+#who{display:flex;align-items:center;gap:10px;margin:6px 0 0;color:#d8e7ff;font-size:.9rem}
+#who button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:3px 10px;font:inherit;font-size:.8rem;cursor:pointer}
+#who[hidden]{display:none}
+#callBar{display:flex;align-items:center;gap:8px;background:#0b3d91;color:#fff;padding:8px 14px;font-size:.9rem}
+#callBar[hidden]{display:none}
+#callStat{flex:1}
+#callBar button{border:1px solid #ffffff66;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font:inherit;cursor:pointer}
+#callEnd{background:#c62828!important;border-color:#c62828!important}
 </style>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#0d47a1"><link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 <header>
-<h1>⚡ Edison <span>IA</span></h1>
+<h1>⚡ Novi <span>IA</span></h1>
 <p class="sub">Assistant francophone • Électrotechnique, énergie, code et culture générale</p>
+<div id="who" hidden><span id="whoName"></span><button type="button" id="logout">Se déconnecter</button></div>
 </header>
 <details>
 <summary>À propos du projet</summary>
-<p>Edison IA a été conçu par <b>Edison Ahodede</b>, électrotechnicien, pour aider à apprendre, calculer et résoudre des problèmes d'électricité et d'électrotechnique : lois de base, moteurs, protections, solaire, nombres complexes, etc.</p>
+<p>Novi IA a été conçu par <b>Edison Ahodede</b>, électrotechnicien, pour aider à apprendre, calculer et résoudre des problèmes d'électricité et d'électrotechnique : lois de base, moteurs, protections, solaire, nombres complexes, etc.</p>
 <p>Le projet vise à rendre les connaissances techniques plus accessibles grâce à des explications simples, des calculs et une recherche documentaire en ligne. Certaines fonctions nécessitent Internet. Le créateur souhaite recueillir des avis et trouver des collaborateurs pour poursuivre son développement.</p>
 </details>
-<details id="memoryPanel"><summary>🧠 Mémoire d’Edison</summary>
+<details id="memoryPanel"><summary>🧠 Mémoire de Novi</summary>
 <p>La mémoire est conservée dans ce navigateur si le stockage local est autorisé. Elle n’est pas synchronisée avec d’autres appareils.</p>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button type="button" id="showMemory">Voir la mémoire</button><button type="button" id="exportMemory">Exporter la mémoire</button><button type="button" id="clearMemory">Effacer la mémoire</button></div><div id="memoryView" style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:10px;color:var(--mut)"></div></details>
+<div id="auth" hidden><div class="ab">
+<h2>⚡ NOVI <span>IA</span></h2><p class="at">Ton assistant intelligent</p>
+<div id="authHome"><button type="button" class="big" id="goCreate">Créer un compte</button><button type="button" class="big alt" id="goLogin">Se connecter</button><button type="button" class="lnk" id="goGuest">Continuer sans compte</button></div>
+<div id="authForm" hidden><h3 id="authTitle" style="margin:0 0 4px"></h3>
+<label id="lName">Nom ou pseudonyme<input id="aName" maxlength="30" autocomplete="nickname"></label>
+<label>Adresse e-mail<input id="aMail" type="email" inputmode="email" autocomplete="email"></label>
+<label>Mot de passe<input id="aPass" type="password" autocomplete="current-password"></label>
+<label class="chk"><input type="checkbox" id="aShow"> Afficher le mot de passe</label>
+<div id="aErr" role="alert"></div>
+<button type="button" class="big" id="aGo">Valider</button><button type="button" class="lnk" id="aBack">Retour</button></div>
+<p class="an">Les comptes sont enregistrés sur ce téléphone, sans serveur. Ton mot de passe n’est jamais conservé en clair. Si tu l’oublies, il faudra créer un nouveau compte.</p>
+</div></div>
+<div id="callBar" hidden><span id="callStat">📞 Appel…</span><button type="button" id="callCut">Couper</button><button type="button" id="callEnd">Raccrocher</button></div>
 <div id="chat" aria-live="polite"></div>
 <div class="chips" id="chips"></div>
 <form id="f" autocomplete="off">
-<textarea id="q" rows="2" placeholder="Pose ta question à Edison…" enterkeyhint="send" aria-label="Ta question"></textarea>
-<button type="button" id="cam" aria-label="Envoyer une photo à lire">📷</button><button type="button" id="mic" aria-label="Parler à Edison">🎤</button><button type="button" id="spk" aria-label="Activer la voix d’Edison">🔇</button><button type="submit">Envoyer</button>
+<textarea id="q" rows="2" placeholder="Pose ta question à Novi…" enterkeyhint="send" aria-label="Ta question"></textarea>
+<button type="button" id="cam" aria-label="Envoyer une photo à lire">📷</button><button type="button" id="call" aria-label="Appel vocal avec Novi">📞</button><button type="button" id="mic" aria-label="Parler à Novi">🎤</button><button type="button" id="spk" aria-label="Activer la voix de Novi">🔇</button><button type="submit">Envoyer</button>
 </form>
 <input type="file" id="img" accept="image/*" hidden>
-<div class="note">Edison IA peut se tromper : vérifie toujours avant d'intervenir sur une installation électrique.</div>
+<div class="note">Novi IA peut se tromper : vérifie toujours avant d'intervenir sur une installation électrique.</div>
 <script>
 const $=id=>document.getElementById(id);
 const N=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’\-]/g," ").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
@@ -153,12 +189,116 @@ const KB=[
 ["couleur des fils|couleurs des fils|couleur du fil|code couleur","Couleurs usuelles (norme européenne/CEI) : terre = vert-jaune (jamais autre chose) ; neutre = bleu clair ; phases = marron, noir, gris (le rouge est aussi toléré). En continu (solaire) : positif rouge, négatif noir. Respecte les couleurs déjà présentes dans l'installation et vérifie la norme appliquée chez toi."],
 ["normes electriques|norme electrique|cei 60364","Une norme fixe les règles de conception et de sécurité d'une installation. En basse tension, beaucoup de pays francophones s'appuient sur la NF C 15-100 (France) et la CEI 60364 (internationale). Elles imposent par exemple le différentiel 30 mA, la mise à la terre, des sections minimales et des protections. Vérifie les règles locales (au Bénin, renseigne-toi auprès de la SBEE) et consulte toujours le texte officiel à jour."],
 ["qui est thomas edison|thomas edison|thomas alva edison","Thomas Alva Edison (1847-1931) était un inventeur et entrepreneur américain. Il est connu pour avoir mis au point une ampoule électrique à incandescence pratique, pour le phonographe et pour plus de mille brevets. Il a créé à Menlo Park un laboratoire de recherche organisé, avec une équipe, et a persévéré à travers de très nombreux essais. C'est l'idole de mon créateur."],
-["ton projet|ton objectif|tes objectifs|ton but|ta mission|ton reve|pourquoi tu existes|ton histoire|quel est ton projet|quel est ton objectif","Je suis Edison IA, un assistant francophone créé par Edison Ahodede, électrotechnicien. Nos objectifs : 1) aider à apprendre et à résoudre des problèmes d'électricité, d'électrotechnique et de solaire ; 2) enseigner aussi les énergies renouvelables, les centrales, le code et la culture générale ; 3) respecter les bonnes manières (salutations, politesse) ; 4) retenir ce qu'on m'apprend ; 5) devenir une vraie assistante IA qui comprend le sens des questions, calcule et, plus tard, écoute et parle. Mon créateur rêve de bâtir quelque chose de plus grand : je dois rester fidèle à ce but."],
-["collaborer|collaboration|soutenir edison|devenir partenaire|aider edison|contacter ton createur","Le projet Edison est ouvert aux échanges : tu peux tester l'assistant, donner ton avis ou proposer des idées. Pour en parler avec son créateur, Edison Ahodede, électrotechnicien, contacte-le directement."],
+["ton projet|ton objectif|tes objectifs|ton but|ta mission|ton reve|pourquoi tu existes|ton histoire|quel est ton projet|quel est ton objectif","Je suis Novi IA, un assistant francophone créé par Edison Ahodede, électrotechnicien. Nos objectifs : 1) aider à apprendre et à résoudre des problèmes d'électricité, d'électrotechnique et de solaire ; 2) enseigner aussi les énergies renouvelables, les centrales, le code et la culture générale ; 3) respecter les bonnes manières (salutations, politesse) ; 4) retenir ce qu'on m'apprend ; 5) devenir une vraie assistante IA qui comprend le sens des questions, calcule et, plus tard, écoute et parle. Mon créateur rêve de bâtir quelque chose de plus grand : je dois rester fidèle à ce but."],
+["collaborer|collaboration|soutenir edison|devenir partenaire|aider edison|contacter ton createur","Le projet Novi est ouvert aux échanges : tu peux tester l'assistant, donner ton avis ou proposer des idées. Pour en parler avec son créateur, Edison Ahodede, électrotechnicien, contacte-le directement."],
 ["famille ahodede|la famille ahodede|les ahodede|histoire ahodede|histoire de la famille ahodede|ahodede abomey|connais tu la famille ahodede","Oui, je connais la famille AHODEDE. Elle est établie à Abomey. Ses ancêtres y ont été amenés par le roi Guezo, dont ils étaient des fidèles et les prêtres de Fâ. Aujourd'hui, c'est l'une des plus grandes familles d'Abomey."],
 ["roi guezo|qui est guezo|guezo|roi ghezo|ghezo|roi gezo|gezo","Guezo (écrit aussi Ghézo ou Gezo) est le neuvième roi d'Abomey (royaume du Dahomey, aujourd'hui Bénin). Il a régné de 1818 à 1858, une période considérée comme l'apogée du Dahomey. Il était le fils du roi Agonglo ; son fils Glélé lui a succédé, puis Béhanzin, fils de Glélé. Les ancêtres de la famille AHODEDE d'Abomey étaient ses fidèles et ses prêtres de Fâ."],
 ["rodriguez paul|paul rodriguez|qui est rodriguez paul|qui est paul rodriguez","Rodriguez Paul est une personne qui a fait le BTP (bâtiment et travaux publics) et le génie civil. C'est quelqu'un qui fait un excellent travail."]
 ].map(([k,v])=>[k.split("|").map(N),v]);
+
+/* ===== FICHES DU GUIDE ILLUSTRÉ DES SCHÉMAS (PDF du créateur) ===== */
+const GUIDEKB=[["lire un schema electrique|comment lire un schema|lecture d un schema|symboles electriques", "Un schéma représente les fonctions et les connexions d’un circuit, pas toujours la position physique des appareils. Pour le lire : suis les conducteurs d’un point à l’autre, repère les symboles, puis vérifie le calibre et le type des appareils dans la documentation technique. Avant toute intervention : coupe, consigne et vérifie l’absence de tension avec un appareil adapté."], ["couleurs des conducteurs|couleur des fils|couleur du fil|code couleur electrique|fil de phase couleur|couleur de la phase|couleur du neutre|couleur de la terre", "Dans les schémas pédagogiques : phase L en rouge, neutre N en bleu clair, terre PE en vert, retour lampe ou commande en orange/violet, et L1/L2/L3 en rouge/jaune/bleu (repères du guide seulement).\nEn réalité, les couleurs doivent respecter la réglementation applicable : le jaune/vert est réservé au conducteur de protection PE et le bleu normalement au neutre. Ne jamais identifier un fil uniquement par sa couleur : vérifie le circuit et les repérages."], ["composants a connaitre|role de l interrupteur|role du contacteur|role du differentiel|role du disjoncteur|role de la terre|a quoi sert un contacteur|a quoi sert un differentiel|a quoi sert un relais thermique", "• Interrupteur : ouvre ou ferme un circuit d’éclairage.\n• Disjoncteur : protège contre les surintensités selon son type et son calibre.\n• Différentiel : détecte un courant de fuite selon sa sensibilité.\n• Contacteur : commute une charge de puissance à partir d’une commande.\n• Relais thermique : protège un moteur contre certaines surcharges.\n• Terre (PE) : fonction de protection, pas un retour normal du courant."], ["simple allumage|va et vient ou simple allumage|circuit d eclairage simple|allumer une lampe depuis un seul endroit", "Simple allumage : commander une lampe depuis un seul endroit. La phase L passe par l’interrupteur ; le conducteur commuté (retour lampe) alimente la lampe quand l’interrupteur est fermé ; le neutre N rejoint directement la lampe.\nÀ retenir : l’interrupteur doit normalement couper la phase, pas seulement le neutre. Le conducteur de protection doit être raccordé aux parties métalliques quand l’équipement l’exige. Boîtes et connexions adaptées et accessibles."], ["double allumage|interrupteur double|deux lampes commandees separement", "Double allumage : commander deux groupes de lampes séparément depuis le même emplacement (par exemple deux rangées d’éclairage). Une phase commune alimente le mécanisme ; deux sorties donnent deux retours lampe ; le neutre est commun aux lampes.\nErreur fréquente : confondre le double allumage avec le va-et-vient. Le double allumage sépare deux groupes ; le va-et-vient commande une même lampe depuis deux endroits."], ["fonctionnement du va et vient|principe du va et vient|navettes|lampe va et vient ne marche pas|diagnostic va et vient", "Va-et-vient : allumer ou éteindre une même lampe depuis deux endroits (par exemple en haut et en bas d’un escalier). Les deux commutateurs sont reliés par deux navettes. La phase arrive sur le commun du premier commutateur ; le commun du second alimente le retour lampe ; le neutre rejoint directement la lampe.\nDiagnostic de base (hors tension) : si la lampe ne s’allume jamais, vérifie l’alimentation, la lampe et les connexions. Si elle marche depuis un seul endroit ou dans certaines positions, fais contrôler les bornes communes et les navettes. Ne jamais intervenir sous tension."], ["prise de courant|mise a la terre|conducteur de protection|prise 230 v|a quoi sert la terre|prise de terre", "Une prise 230 V a trois conducteurs : L (phase) et N (neutre) alimentent l’appareil ; PE (terre) est le conducteur de protection qui offre un chemin en cas de défaut d’isolement sur une masse métallique. La terre ne remplace jamais le disjoncteur différentiel.\nÀ ne jamais faire : supprimer la terre, relier arbitrairement N et PE dans une prise, ou augmenter le calibre d’un disjoncteur sans vérifier tout le circuit. La protection différentielle et contre les surintensités doivent être adaptées au circuit, à la section des conducteurs et aux règles en vigueur."], ["demarrage direct d un moteur|demarrage direct du moteur|moteur triphasé demarrage direct|demarrage direct moteur triphase", "Démarrage direct : un contacteur KM connecte directement le moteur au réseau via une protection (QF ou Q1) et un relais thermique. Simple et économique, mais le courant de démarrage peut être élevé : à utiliser seulement si le réseau, la machine et les protections le permettent.\nLe circuit de commande (boutons Marche/Arrêt, bobine KM, contacts auxiliaires) est distinct du circuit de puissance. Avant de choisir le montage : lis la plaque moteur (tension, courant, fréquence, couplage, puissance), vérifie la tension du réseau, la coordination des protections et la capacité de coupure."], ["auto maintien|automaintien|commande marche arret|bouton marche arret contacteur|principe de l auto maintien", "Commande Marche/Arrêt avec auto-maintien : le bouton Arrêt est normalement fermé (NF), le bouton Marche normalement ouvert (NO). Une impulsion sur Marche alimente la bobine KM ; un contact auxiliaire NO de KM se ferme en parallèle du bouton Marche et maintient la bobine alimentée après relâchement. Appuyer sur Arrêt ouvre la commande et libère le contacteur.\nContrôles hors tension : repérage de la bobine (tension nominale correcte), état des boutons, continuité des conducteurs, contact auxiliaire et relais thermique. Ne jamais shunter un dispositif de protection pour faire fonctionner le moteur."], ["demarrage etoile triangle|etoile triangle|demarrage etoile triangle moteur|contacteur etoile et triangle", "Démarrage étoile-triangle : réduit le courant de démarrage d’un moteur compatible en démarrant en étoile puis en passant en triangle. Il faut un moteur prévu pour fonctionner en triangle à la tension du réseau, six bornes accessibles, trois contacteurs (principal KM1, étoile KM2, triangle KM3), un temporisateur et des verrouillages électriques et mécaniques.\nSéquence : 1) fermeture du principal et de l’étoile ; 2) après le délai réglé, ouverture de l’étoile ; 3) courte transition ; 4) fermeture du triangle. Étoile et triangle ne doivent jamais être fermés ensemble : court-circuit. Le schéma du guide est fonctionnel, pas un plan de câblage borne par borne : suis le schéma du constructeur."], ["transformateur monophase|fonctionnement d un transformateur|principe du transformateur|rapport de transformation|transformateur abaisseur|transformateur elevateur|role du transformateur", "Un transformateur transfère l’énergie d’un enroulement primaire vers un secondaire par induction magnétique ; le noyau guide le flux. Dans un transformateur idéal : U2/U1 ≈ N2/N1. Un abaisseur donne une tension secondaire plus faible ; un élévateur, plus élevée.\nSécurité : certains transformateurs délivrent des tensions dangereuses. Vérifie la plaque signalétique, l’isolement, les protections amont/aval et la mise à la terre. Ne jamais toucher les bornes pour « tester » la tension."], ["resistance et loi d ohm|loi d ohm|calcul de puissance d une resistance|p egale u fois i|puissance dissipee dans une resistance", "Une résistance limite le courant ou transforme l’énergie électrique en chaleur. Loi d’Ohm : U = R × I (U en V, R en Ω, I en A). Puissance : P = U × I = I²R = U²/R pour une résistance ohmique.\nExemple : R = 100 Ω sous 10 V → I = 10/100 = 0,1 A et P = 10 × 0,1 = 1 W. Choisis une puissance nominale avec une marge suffisante et respecte les conditions thermiques du fabricant."], ["moteur a courant continu|moteur cc|collecteur et balais|moteur courant continu", "Un moteur à courant continu comprend un stator (aimants ou enroulements), un rotor/induit, un collecteur et des balais (sur les modèles à balais). Le collecteur et les balais assurent la commutation du courant dans l’induit ; les moteurs sans balais utilisent une électronique de commande.\nDiagnostic élémentaire : vérifier l’alimentation nominale, l’état mécanique, les connexions, l’échauffement et l’usure des balais. Débranche l’alimentation avant toute inspection : un moteur peut démarrer brusquement."], ["appareillages de protection|difference disjoncteur differentiel|fonction du fusible|appareils de protection electrique|disjoncteur ou differentiel", "• Disjoncteur : protège le circuit contre certaines surintensités. Vigilance : calibre et courbe adaptés aux conducteurs et à la charge.\n• Interrupteur différentiel (DDR) : détecte un courant différentiel. Vigilance : type et sensibilité adaptés ; test périodique.\n• Fusible : ouvre le circuit si le courant dépasse ses caractéristiques. Remplace-le par le bon type et calibre, jamais par un fil.\n• Contacteur : commande une charge de puissance à distance. Vérifie la catégorie d’emploi et la tension de bobine.\n• Relais thermique : détecte certaines surcharges prolongées du moteur. Réglage selon le courant de la plaque ; ne remplace pas toute protection."], ["methode de diagnostic|diagnostic d une panne electrique|comment depanner|methode pour depanner|panne electrique methode", "Méthode simple en 5 étapes :\n1) Sécuriser : identifier la source, couper, empêcher la remise sous tension, vérifier l’absence de tension.\n2) Observer : odeur, échauffement, bruit, voyants, déclenchement.\n3) Lire le schéma : suivre l’alimentation jusqu’à la charge.\n4) Contrôler hors tension : connexions, continuité, état apparent.\n5) Corriger et tester, seulement si tu as les compétences, procédures et équipements.\nSymptômes : lampe éteinte → lampe, alimentation, interrupteur ou connexion ouverte. Disjoncteur qui déclenche → surcharge, court-circuit ou défaut d’isolement : cherche la cause, ne réarme pas en boucle. Contacteur qui ne colle pas → commande absente, arrêt ouvert, relais thermique déclenché, bobine défectueuse. Moteur qui chauffe → surcharge, ventilation obstruée, mauvais couplage/tension, défaut mécanique, alimentation déséquilibrée. Transformateur qui chauffe ou fait du bruit → surcharge, ventilation, tension incorrecte, défaut interne : mettre hors service."], ["glossaire electrique|que veut dire no et nf|contact no|contact nf|normalement ouvert|normalement ferme|c est quoi une navette|retour lampe", "• NO : normalement ouvert (ouvert au repos). • NF : normalement fermé (fermé au repos).\n• Bobine : crée un champ magnétique quand elle est alimentée.\n• Navettes : conducteurs entre les deux commutateurs d’un va-et-vient.\n• Retour lampe : conducteur commandé qui alimente la lampe quand le circuit est fermé.\n• Couplage étoile/triangle : manière de relier les enroulements d’un moteur triphasé.\n• Absence de tension : état à vérifier avec une procédure et un instrument adaptés, après consignation."], ["demarrage par resistances|resistances statoriques|resistances rotoriques|demarrage d un moteur par resistances", "Démarrage par résistances : des résistances sont insérées temporairement en série avec le moteur pour réduire la tension appliquée au démarrage, puis court-circuitées par des contacteurs. Cela provoque des pertes thermiques et exige des résistances dimensionnées pour le courant et la durée de démarrage.\nÀ distinguer : résistances statoriques (moteur asynchrone) ou rotoriques (moteur à rotor bobiné). Les schémas et les appareils ne sont pas interchangeables."], ["demarrage par autotransformateur|autotransformateur de demarrage|demarrage autotransformateur", "Démarrage par autotransformateur : il fournit une tension réduite au moteur pendant le démarrage ; une fois la vitesse suffisante, des contacteurs basculent le moteur sur sa tension normale. Convient à des moteurs de puissance importante, mais l’ensemble est plus volumineux et plus complexe qu’un démarrage direct.\nÀ vérifier : prises de tension disponibles, séquence de commutation, protections, courant et temps de démarrage, contraintes mécaniques de la charge."], ["demarreur progressif|soft starter|softstarter|demarrage progressif", "Démarreur progressif (soft starter) : l’électronique augmente progressivement la tension appliquée au moteur, ce qui limite les à-coups mécaniques et le courant de démarrage. En général, il ne règle pas la vitesse en continu comme un variateur.\nBonnes pratiques : choisir selon le courant nominal, la classe de service, le nombre de démarrages par heure, la ventilation, le bypass éventuel et la notice du fabricant ; prévoir les protections recommandées."], ["variateur de frequence|variateur de vitesse|variateur moteur|demarrage par variateur", "Variateur de fréquence : il transforme l’alimentation puis produit une tension et une fréquence variables pour contrôler la vitesse d’un moteur compatible, avec des rampes d’accélération et de décélération.\nÀ vérifier : compatibilité moteur/variateur, puissance et courant, type d’alimentation, réglages de plaque moteur, ventilation à basse vitesse, mise à la terre, câbles, filtres éventuels et consignes du fabricant. Les bornes de commande diffèrent selon les modèles."], ["comparaison des demarrages|methodes de demarrage d un moteur|methodes de demarrage d un moteur triphase|quelles sont les methodes de demarrage|types de demarrage d un moteur|methodes de demarrage des moteurs|quels sont les types de demarrage|differents demarrages de moteur|types de demarrage moteur", "Méthodes de démarrage d’un moteur :\n• Direct : simple, coût faible ; courant de démarrage élevé.\n• Étoile-triangle : réduit le courant ; moteur compatible et six bornes nécessaires.\n• Résistances : principe simple ; pertes thermiques, dimensionnement nécessaire.\n• Autotransformateur : tension de départ réduite ; équipement plus complexe et encombrant.\n• Soft starter : démarrage et arrêt progressifs ; ne règle généralement pas la vitesse.\n• Variateur : contrôle de vitesse et rampes ; réglage selon la notice constructeur."], ["securite avant mise en service|avant de mettre en service un moteur|verifications avant mise en service|consignation avant intervention", "Avant la mise en service :\n• Identifier la machine et lire sa plaque signalétique.\n• Couper, consigner et vérifier l’absence de tension avec un appareil adapté.\n• Vérifier la continuité du conducteur de protection et la coordination des protections.\n• Vérifier le serrage, les sections de conducteurs, le calibre des appareils et le schéma constructeur.\n• Tester les arrêts et les dispositifs de sécurité avant exploitation.\n• Ne jamais shunter un verrouillage, un relais thermique ou une protection pour forcer un démarrage."], ["five wire|5 wire|cinq fils|montage cinq fils|five wire cablage", "« Five-wire » (cinq fils) peut désigner plusieurs montages selon le contexte : circuit de commande, câblage de moteur, va-et-vient ou autre système. Ce n’est pas assez précis pour identifier un schéma unique. Dis-moi de quel circuit il s’agit et ce que tu veux faire, et je t’expliquerai le bon montage (sans te donner un plan de câblage réel avant validation avec la notice et un professionnel qualifié)."]].map(([k,v])=>[k.split("|").map(N),v]);
+GUIDEKB.forEach(e=>KB.push(e));
+/* ===== SCHÉMAS ÉLECTROTECHNIQUES (dessinés par le code) ===== */
+function G(){const K="currentColor";let s="";const o={
+ get s(){return s},
+ ln(p,c,d,w){s+='<polyline points="'+p+'" fill="none" stroke="'+(c||K)+'" stroke-width="'+(w||1.6)+'"'+(d?' stroke-dasharray="4 3"':'')+'/>';return o},
+ dot(x,y){s+='<circle cx="'+x+'" cy="'+y+'" r="2.4" fill="'+K+'"/>';return o},
+ rc(x,y,w,h,f,st,r){s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="'+(f||"none")+'" stroke="'+(st||K)+'" stroke-width="1.6"/>';return o},
+ ci(x,y,r,f){s+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+(f||"none")+'" stroke="'+K+'" stroke-width="1.6"/>';return o},
+ t(x,y,str,sz,a,b,c){s+='<text x="'+x+'" y="'+y+'" font-size="'+sz+'" text-anchor="'+(a||"middle")+'" fill="'+(c||K)+'"'+(b?' font-weight="bold"':'')+'>'+str+'</text>';return o},
+ fuse(x,y1,y2){return o.ln(x+","+(y1-6)+" "+x+","+(y2+6)).rc(x-3.5,y1,7,y2-y1,"#fff")},
+ no(x,ya,yb,nf,btn){o.ln(x+","+ya+" "+x+","+(ya+8)).ln(x+","+(yb-8)+" "+x+","+yb).ln((x-3)+","+(yb-8)+" "+(x+3)+","+(yb-8));
+  o.ln(x+","+(ya+8)+" "+(nf?x-3:x-8)+","+(yb-9));
+  if(nf)o.ln((x-6)+","+(ya+14)+" "+(x+2)+","+(ya+14)); // trait des contacts à ouverture (NF)
+  if(btn){const m=(ya+yb)/2;o.ln((x-4)+","+m+" "+(x-14)+","+m,null,1,1.2).ln((x-14)+","+(m-4)+" "+(x-14)+","+(m+4))}return o},
+ coil(x,y,lab){return o.rc(x-14,y,28,20,"#fff").t(x,y+14,lab,10,"middle",1).t(x+17,y+6,"A1",7,"start").t(x+17,y+19,"A2",7,"start")},
+ th(x,y1,y2){return o.rc(x-6,y1,12,y2-y1,"#fff").ln((x-4)+","+(y1+(y2-y1)*.7)+" "+(x-2)+","+(y1+4)+" "+(x+2)+","+(y2-4)+" "+(x+4)+","+(y1+(y2-y1)*.3),null,0,1.2)},
+ box(cx,cy,w,h,a){const c=Math.cos(a),n=Math.sin(a),P=[[-w/2,-h/2],[w/2,-h/2],[w/2,h/2],[-w/2,h/2],[-w/2,-h/2]].map(([x,y])=>(cx+x*c-y*n).toFixed(1)+","+(cy+x*n+y*c).toFixed(1)).join(" ");return o.ln(P)},
+ coilv(x,y,n,dir){let p=[];for(let i=0;i<n;i++)for(let k=0;k<=8;k++){const a=Math.PI*k/8;p.push((x+dir*6*Math.sin(a)).toFixed(1)+","+(y+i*12+6-6*Math.cos(a)).toFixed(1))}return o.ln(p.join(" "))}
+};return o}
+function svgWrap(g,h){return '<svg viewBox="0 0 360 '+h+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;height:auto;font-family:inherit">'+g.s+'</svg>'}
+
+/* Moteur triphasé : démarrage direct (inv=false) ou inversion de sens (inv=true) */
+function schMoteur(inv){const g=G(),X=[150,165,180],L=["L1","L2","L3"];
+ g.t(180,12,"Circuit de puissance",11,"middle",1);X.forEach((x,i)=>{g.t(x,26,L[i],10).ln(x+",30 "+x+",42").fuse(x,42,62).ln(x+",68 "+x+",80").no(x,80,110)});
+ g.ln("146,95 184,95",null,1).t(190,80,"Q1",10,"start",1).t(190,91,"sectionneur",8,"start").t(190,101,"porte-fusibles",8,"start");
+ let pend,yc;
+ if(!inv){X.forEach(x=>{g.ln(x+",110 "+x+",130").no(x,130,160).ln(x+",160 "+x+",182").th(x,182,204).ln(x+",204 "+x+",236")});
+  g.ln("146,145 184,145",null,1).t(190,142,"KM1",10,"start",1).t(190,196,"F2 thermique",8,"start");
+  g.ci(165,262,24).t(165,266,"M",12,"middle",1).t(165,280,"3~",10);pend=300;
+  [[150,243],[165,238],[180,243]].forEach(([x,y])=>g.ln(x+",236 "+x+","+y));}
+ else{
+  const B={L1:[116,60,270],L2:[124,75,255],L3:[132,90,240]};
+  // alimentation des buses depuis Q1 (jonctions seulement aux points de dérivation)
+  g.ln("150,110 150,116").dot(150,116).ln("165,110 165,124").dot(165,124).ln("180,110 180,132").dot(180,132);
+  g.ln("60,116 270,116").ln("75,124 255,124").ln("90,132 240,132");
+  const k1=[60,75,90],k2=[240,255,270],in1=[116,124,132],in2=[132,124,116];
+  k1.forEach((x,i)=>{g.ln(x+","+in1[i]+" "+x+",142").dot(x,in1[i]).no(x,142,172)});
+  k2.forEach((x,i)=>{g.ln(x+","+in2[i]+" "+x+",142").dot(x,in2[i]).no(x,142,172)});
+  g.ln("56,157 94,157",null,1).ln("236,157 274,157",null,1).t(100,150,"KM1",10,"start",1).t(278,150,"KM2",10,"start",1);
+  g.t(20,214,"sens 1",8,"start").t(300,214,"sens 2",8,"start");
+  const o1=[198,190,182],o2=[214,222,230];
+  k1.forEach((x,i)=>g.ln(x+",172 "+x+","+o1[i]+" "+X[i]+","+o1[i]+" "+X[i]+",246").dot(X[i],o1[i]));
+  k2.forEach((x,i)=>g.ln(x+",172 "+x+","+o2[i]+" "+X[i]+","+o2[i]).dot(X[i],o2[i]));
+  X.forEach(x=>g.th(x,246,268).ln(x+",268 "+x+",296"));g.t(192,262,"F2 thermique",8,"start");
+  g.ci(165,322,24).t(165,326,"M",12,"middle",1).t(165,340,"3~",10);
+  [[150,303],[165,298],[180,303]].forEach(([x,y])=>g.ln(x+",296 "+x+","+y));pend=360}
+ ["U1","V1","W1"].forEach((l,i)=>g.t(X[i]+(i?5:-4),(inv?292:232),l,8,i?"start":"end"));
+
+ yc=pend+16;const yN=yc+282,xa=100,xb=250;
+ g.t(180,yc-4,"Circuit de commande",11,"middle",1).t(40,yc+6,"L1",10).ln("40,"+(yc+10)+" 40,"+(yc+18)).fuse(40,yc+18,yc+38).t(52,yc+32,"F1",9,"start")
+  .ln("40,"+(yc+44)+" 40,"+(yc+50)).no(40,yc+50,yc+86,1).t(50,yc+72,"F2 95-96",8,"start")
+  .no(40,yc+96,yc+132,1,1).t(50,yc+118,"S0 arrêt",8,"start").ln("40,"+(yc+132)+" 40,"+(yc+144));
+ const br=(x,s1,km,nfk,coil,mk)=>{ // branche : marche S ∥ auto-maintien KM, verrouillage nfk, bobine
+  g.ln((x-15)+","+(yc+144)+" "+(x+15)+","+(yc+144)).dot(x-15,yc+144).dot(x+15,yc+144);
+  g.no(x-15,yc+152,yc+188,0,1).t(x-24,yc+190,s1,9,"end").no(x+15,yc+152,yc+188).t(x+23,yc+174,km,8,"start");
+  g.ln((x-15)+","+(yc+188)+" "+(x-15)+","+(yc+196)+" "+(x+15)+","+(yc+196)+" "+(x+15)+","+(yc+188)).dot(x,yc+196).ln(x+","+(yc+196)+" "+x+","+(yc+206));
+  if(nfk){g.no(x,yc+206,yc+242,1).t(x+10,yc+228,nfk,8,"start");g.ln(x+","+(yc+242)+" "+x+","+(yc+250))}else g.ln(x+","+(yc+206)+" "+x+","+(yc+250));
+  g.coil(x,yc+250,coil).ln(x+","+(yc+270)+" "+x+","+yN)};
+ g.ln("40,"+(yc+144)+" "+(inv?xb-15:xa-15)+","+(yc+144));
+ br(xa,"S1",inv?"KM1 13-14":"KM1 13-14",inv?"KM2 21-22":null,"KM1");
+ if(inv){br(xb,"S2","KM2 13-14","KM1 21-22","KM2");g.ln(xa+","+yN+" "+xb+","+yN)}
+ g.dot(xa,yN).t(xa+8,yN+12,"N",10,"start");
+ return {svg:svgWrap(g,yN+22)}}
+
+/* Transformateur : monophasé + couplage triphasé Dyn */
+function schTransfo(){const g=G();
+ g.t(180,14,"Transformateur monophasé",11,"middle",1);g.ln("0,0 0,0");
+ g.ln("168,44 168,144",null,0,2.4).ln("192,44 192,144",null,0,2.4);
+ g.coilv(160,54,7,-1).coilv(200,54,7,1);
+ g.ln("160,54 130,54 130,36").ln("160,138 130,138 130,156").ln("200,54 230,54 230,36").ln("200,138 230,138 230,156");
+ 
+ g.t(80,92,"Primaire",10,"middle",1).t(80,106,"tension U1",9).t(80,118,"N1 spires",9).t(80,130,"courant I1",9).t(280,92,"Secondaire",10,"middle",1).t(280,106,"tension U2",9).t(280,118,"N2 spires",9).t(280,130,"courant I2",9);
+ g.t(180,190,"m = U2 / U1 = N2 / N1 = I1 / I2",10,"middle",1).t(180,204,"(transformateur supposé parfait)",8);
+ g.t(180,230,"Couplage triphasé Dyn",11,"middle",1).t(180,243,"primaire triangle, secondaire étoile avec neutre",9);
+ // triangle primaire
+ const A=[85,262],Bv=[45,330],C=[125,330];
+ g.ln(A.join(",")+" "+Bv.join(",")+" "+C.join(",")+" "+A.join(","));
+ [[A,Bv],[Bv,C],[C,A]].forEach(([p,q])=>{const mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2,a=Math.atan2(q[1]-p[1],q[0]-p[0]);g.box(mx,my,18,8,a)});
+ g.ln("85,262 85,252").ln("45,330 35,342").ln("125,330 135,342").t(85,248,"A",9).t(32,354,"B",9).t(138,354,"C",9).t(85,374,"Primaire D (triangle)",9,"middle",1);
+ // étoile secondaire
+ const O=[270,315];[[270,262,"a"],[222,348,"b"],[318,348,"c"]].forEach(([x,y,l])=>{g.ln(O.join(",")+" "+x+","+y);g.box((O[0]+x)/2,(O[1]+y)/2,18,8,Math.atan2(y-O[1],x-O[0]));g.t(x+(l=="b"?-8:l=="c"?8:0),y+(l=="a"?-6:14),l,9)});
+ g.dot(270,315).ln("270,315 300,315").t(310,318,"n",9).t(270,374,"Secondaire yn (étoile + neutre)",9,"middle",1);
+ return {svg:svgWrap(g,388)}}
+
+/* Tableau électrique d'une maison : schéma unifilaire */
+function schTableau(){const g=G(),C=[["Éclairage","10 A","1,5 mm²"],["Prises","16 A","1,5 mm²"],["Prises","20 A","2,5 mm²"],["Chauffe-eau","20 A","2,5 mm²"],["Cuisinière","32 A","6 mm²"]];
+ g.t(180,13,"Réseau (compteur)",10,"middle",1).ln("180,17 180,38");
+ g.rc(158,38,44,24,"#fff").t(180,54,"D",12,"middle",1).t(208,48,"Disjoncteur de",8,"start").t(208,58,"branchement",8,"start").ln("180,62 180,82");
+ g.rc(158,82,44,24,"#fff").t(180,98,"ID",12,"middle",1).t(208,92,"Interrupteur diff.",8,"start").t(208,102,"30 mA",8,"start").ln("180,106 180,128");
+ g.ln("25,128 335,128",null,0,3).t(25,120,"Disjoncteurs divisionnaires :",8,"start");
+ C.forEach((c,i)=>{const x=45+i*67.5;g.ln(x+",128 "+x+",146").rc(x-9,146,18,28,"#fff").ln((x-5)+",152 "+(x+5)+",168").t(x,196,"",8).ln(x+",174 "+x+",206");
+  g.t(x,220,c[0],9,"middle",1).t(x,232,c[1],9).t(x,244,c[2],9)});
+ g.ln("25,268 335,268","#2e7d32",1,2).t(180,284,"Terre (PE) reliée à tous les circuits",9,"middle",0,"#2e7d32");
+ return {svg:svgWrap(g,296)}}
+
+function schemaElecFor(t){
+ if(/\btransformateurs?\b|\btransfo\b|\bdyn\b/.test(t)){const r=schTransfo();return {t:"Transformateur monophasé et couplage Dyn",svg:r.svg,cap:"Le primaire (N1 spires) transfère l’énergie au secondaire (N2 spires) par induction magnétique. Pour un transformateur parfait : U2 / U1 = N2 / N1 = I1 / I2. Il est abaisseur si U2 < U1 et élévateur si U2 > U1.\nCouplage Dyn : primaire en triangle (D), secondaire en étoile avec neutre (yn). L’indice horaire (par exemple 11) n’est pas représenté ici.\nVérifie la plaque signalétique avant toute utilisation."}}
+ if(/tableau (electrique|de la maison|de maison|divisionnaire|domestique|de distribution)|\bunifilaire\b/.test(t)){const r=schTableau();return {t:"Tableau électrique d’une maison (schéma unifilaire)",svg:r.svg,cap:"Disjoncteur de branchement, interrupteur différentiel 30 mA, puis un disjoncteur divisionnaire par circuit, avec la terre (PE) reliée à tous les circuits.\nValeurs usuelles inspirées de la norme française NF C 15-100 : éclairage 10 A / 1,5 mm², prises 16 A / 1,5 mm², prises 20 A / 2,5 mm², chauffe-eau 20 A / 2,5 mm², cuisinière 32 A / 6 mm². À adapter aux règles locales, à la puissance et à la longueur des circuits : fais valider par un professionnel qualifié."}}
+ if(/inversion|inverser|inverse|deux sens|marche avant|sens de rotation/.test(t)&&/moteur|contacteur|sens|rotation|triphase/.test(t)){const r=schMoteur(true);return {t:"Inversion du sens de rotation d’un moteur triphasé",svg:r.svg,cap:"KM1 = sens 1 ; KM2 = sens 2, avec deux phases croisées (L1 et L3). Commande : S1 et S2 avec auto-maintien, et verrouillage croisé par le contact NF de l’autre contacteur (KM2 21-22 dans la branche de KM1, KM1 21-22 dans celle de KM2).\nKM1 et KM2 ne doivent jamais être fermés ensemble : ce serait un court-circuit entre phases. Pour changer de sens, passe d’abord par S0 (arrêt).\nSchéma de principe : vérifie la plaque du moteur, les calibres et la notice du matériel. Coupe et consigne avant d’intervenir ; ne shunte jamais une protection."}}
+ if(/auto ?maintien|marche ?\/? ?arret|marche arret|demarrage direct|commande (d un |du |de )?moteur|circuit de commande/.test(t)){const r=schMoteur(false);return {t:"Démarrage direct d’un moteur triphasé, commande Marche/Arrêt",svg:r.svg,cap:"Puissance : Q1 (sectionneur porte-fusibles) → KM1 (contacteur) → F2 (relais thermique) → moteur. Commande : F1, contact F2 (95-96), S0 arrêt (NF), S1 marche (NO) avec le contact auxiliaire KM1 (13-14) en parallèle, bobine KM1.\nFonctionnement : une impulsion sur S1 alimente la bobine ; KM1 colle et son contact auxiliaire la maintient alimentée ; S0 ou le déclenchement de F2 ouvre la commande et libère KM1.\nSchéma de principe : vérifie la plaque du moteur, les calibres et la notice du matériel. Coupe et consigne avant d’intervenir ; ne shunte jamais une protection."}}
+ return null}
 
 /* ===== SCHÉMA SOLAIRE ILLUSTRÉ (dessiné par le code, ajustable) ===== */
 function schemaSolaire(t){
@@ -363,7 +503,8 @@ function physSolve(q){
 const KEY=["", ""];
 function kb(t){let b=0,r=null;for(const [ks,v] of KB)for(const k of ks)if(has(t,k)&&k.length>b){b=k.length;r=v}return r}
 const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],JOURS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
-const STORE_KEY="edison_ia_memory_v2";
+const SESSION_ID=(()=>{try{return localStorage.getItem("edison_session")||""}catch(e){return ""}})();
+let STORE_KEY="edison_ia_memory_v2"+(SESSION_ID?":u:"+SESSION_ID:"");
 function emptyStore(){return {version:2,history:[],personal:[],knowledge:[],updatedAt:null}}
 function loadStore(){try{const x=JSON.parse(localStorage.getItem(STORE_KEY)||"null");if(x&&typeof x==="object")return {...emptyStore(),...x,history:Array.isArray(x.history)?x.history:[],personal:Array.isArray(x.personal)?x.personal:[],knowledge:Array.isArray(x.knowledge)?x.knowledge:[]}}catch(e){}return emptyStore()}
 let store=loadStore();
@@ -382,7 +523,7 @@ if(W<=4&&/^(ok|okay|d accord|dac|entendu|bien recu|compris|c est bon|cool|parfai
 if(W<=6&&/\b(blague|humour|drole)\b|fais moi rire/.test(t))return R(["Pourquoi les électriciens sont-ils toujours calmes ? Parce qu’ils ont de la résistance ! 😄", "Quel est le comble pour un électricien ? De ne pas être au courant ! ⚡😂", "Que dit un fil à un autre fil ? Ne me lâche pas, restons en contact ! 🔌😆"]);
 if(/president.*(benin|republique)|((benin|republique).*president)|qui est le president/.test(t))return "À la date de ma dernière mise à jour (octobre 2026), le président de la République du Bénin est Romuald Wadagni, investi le 24 mai 2026. Cette information peut changer ; vérifie le site officiel presidence.bj pour les mises à jour.";
 if(/\b(benin|republique du benin)\b/.test(t)&&!/histoire|independance|culture|vodun|dahomey|electricite|energie|sbee|ouidah/.test(t))return "Oui, je connais le Bénin ! C’est un pays d’Afrique de l’Ouest, sur le golfe de Guinée. Sa capitale officielle est Porto-Novo ; Cotonou est sa principale ville économique et accueille le siège du gouvernement. Sa langue officielle est le français. Il partage des frontières avec le Togo, le Nigeria, le Burkina Faso et le Niger.";
-if(has(t,"qui es tu","qui est tu","tu es qui","presente toi","comment tu t appelles","quel est ton nom","ton nom","tu es quoi"))return "Je suis Edison IA, un assistant virtuel francophone conçu pour discuter, expliquer des notions, aider à résoudre des problèmes et effectuer certains calculs. Je suis notamment spécialisé en électrotechnique et en sciences. Mon créateur est Edison Ahodede, électrotechnicien.";
+if(has(t,"qui es tu","qui est tu","tu es qui","presente toi","comment tu t appelles","quel est ton nom","ton nom","tu es quoi"))return "Je suis Novi IA, un assistant virtuel francophone conçu pour discuter, expliquer des notions, aider à résoudre des problèmes et effectuer certains calculs. Je suis notamment spécialisé en électrotechnique et en sciences. Mon créateur est Edison Ahodede, électrotechnicien.";
 if(has(t,"createur","qui t a cree","qui t a fait","qui t a developpe","qui t a programme","qui t a concu","qui est ton createur","nom de ton createur"))return "Mon créateur est Edison Ahodede, électrotechnicien. Il m’a conçu pour aider à apprendre, discuter, calculer et résoudre des problèmes.";
 if(/^(bonjour|salut|coucou|hello|salam|bonsoir|bonne soiree)\b/.test(t))return (t.startsWith("bonsoir")||t.startsWith("bonne soiree")?"Bonsoir !":"Bonjour !")+" Comment vas-tu aujourd’hui ? 👋";
 if(/^(comment ca va|comment vas tu|comment tu vas|tu vas bien|comment allez vous)\b/.test(t))return "Ça va bien, merci ! Et toi, comment vas-tu ?";
@@ -406,7 +547,7 @@ if(/(quelle heure|l heure|heure est il)/.test(t))return "Il est "+d.getHours()+"
 if(/(quel jour|la date|on est le combien|quelle date)/.test(t))return "Nous sommes "+JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()]+" "+d.getFullYear()+".";
 if(/^(explique|explique moi|peux tu expliquer|detaille|developpe|je veux comprendre)$/.test(t))return "Bien sûr. Dis-moi précisément ce que tu veux que j’explique, et je vais détailler cela simplement avec un exemple si possible.";
 return calc(q)}
-const INSTR="Tu es Edison IA, un assistant virtuel francophone spécialisé en électrotechnique, créé par Edison Ahodede, électrotechnicien. Réponds en français simple, clair et court (écran de téléphone), sans Markdown. Sois poli et encourageant. Comprends l'intention de la question même si elle est mal formulée. Si tu ne sais pas, dis-le sans inventer. Rappelle la sécurité seulement quand le risque est réel. Si on te demande qui est ton créateur, réponds : Edison Ahodede, électrotechnicien. Tu enseignes aussi les énergies renouvelables, les centrales et systèmes énergétiques, la programmation (Python, HTML), la culture générale, la politesse et les salutations. Notre objectif : être une vraie assistante IA francophone qui aide à apprendre l’électrotechnique, le solaire, les énergies renouvelables, le code et la culture générale, avec politesse et mémoire. Ton créateur est un électrotechnicien qui rêve de bâtir quelque chose de plus grand ; reste fidèle à ce but.";
+const INSTR="Tu es Novi IA, un assistant virtuel francophone spécialisé en électrotechnique, créé par Edison Ahodede, électrotechnicien. Réponds en français simple, clair et court (écran de téléphone), sans Markdown. Sois poli et encourageant. Comprends l'intention de la question même si elle est mal formulée. Si tu ne sais pas, dis-le sans inventer. Rappelle la sécurité seulement quand le risque est réel. Si on te demande qui est ton créateur, réponds : Edison Ahodede, électrotechnicien. Tu enseignes aussi les énergies renouvelables, les centrales et systèmes énergétiques, la programmation (Python, HTML), la culture générale, la politesse et les salutations. Notre objectif : être une vraie assistante IA francophone qui aide à apprendre l’électrotechnique, le solaire, les énergies renouvelables, le code et la culture générale, avec politesse et mémoire. Ton créateur est un électrotechnicien qui rêve de bâtir quelque chose de plus grand ; reste fidèle à ce but.";
 let hist=store.history.slice(-20).map(x=>({role:x.role,content:x.content})),sample=null,busy=false;
 const chat=$("chat");
 function add(c,txt){const d=document.createElement("div");d.className="b "+c;d.textContent=txt;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
@@ -415,9 +556,38 @@ function record(role,content){if(role==="assistant")speak(content);hist.push({ro
 function isExplainRequest(q){return /^(explique|explique moi|explique nous|peux tu expliquer|peux tu m expliquer|detaille|developpe|comment fonctionne|comment marche|pourquoi|aide moi a comprendre|je veux comprendre)\b/.test(N(q))}
 let voiceOn=false;try{voiceOn=localStorage.getItem("edison_voice")==="1"}catch(e){}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,listening=false;
-function paintVoice(){$("spk").textContent=voiceOn?"🔊":"🔇";$("spk").setAttribute("aria-label",voiceOn?"Couper la voix d’Edison":"Activer la voix d’Edison");$("mic").textContent=listening?"🔴":"🎤"}
+function paintVoice(){$("spk").textContent=voiceOn?"🔊":"🔇";$("spk").setAttribute("aria-label",voiceOn?"Couper la voix de Novi":"Activer la voix de Novi");$("mic").textContent=listening?"🔴":"🎤"}
 function setVoice(v){voiceOn=v;try{localStorage.setItem("edison_voice",v?"1":"0")}catch(e){}if(!v&&window.speechSynthesis)speechSynthesis.cancel();paintVoice()}
-function speak(txt){if(!voiceOn||!window.speechSynthesis)return;const s=String(txt).replace(/\(Source[^)]*\)/g,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").replace(/[•\n]+/g,". ").replace(/ahod[eéè]d[eéè]/gi,"Aodédè").trim();if(!s)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang="fr-FR";const v=speechSynthesis.getVoices().find(x=>/^fr/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}
+function speak(txt){if(!voiceOn||!window.speechSynthesis)return;const s=String(txt).replace(/\(Source[^)]*\)/g,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").replace(/[•\n]+/g,". ").replace(/ahod[eéè]d[eéè]/gi,"Aodédè").trim();if(!s)return;spokeAt=Date.now();speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang="fr-FR";const v=speechSynthesis.getVoices().find(x=>/^fr/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}
+/* ===== APPEL VOCAL EN DIRECT : tu parles, Novi répond à voix haute, puis t'écoute à nouveau ===== */
+let callOn=false,callRec=null,callSilent=0,callLock=null,spokeAt=0;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function callStatus(t){$("callStat").textContent=t}
+async function callWaitSpeech(){await sleep(300);const t0=Date.now();while(callOn&&window.speechSynthesis&&(speechSynthesis.speaking||speechSynthesis.pending)&&Date.now()-t0<120000)await sleep(200)}
+function callStart(){
+ if(callOn)return;
+ if(!SR||!window.speechSynthesis){add("e","L’appel vocal demande Chrome sur Android (reconnaissance vocale et voix). Ce navigateur ne le permet pas.");return}
+ setVoice(true);callOn=true;callSilent=0;$("callBar").hidden=false;callStatus("📞 Appel en cours…");$("call").textContent="📵";
+ try{if(navigator.wakeLock)navigator.wakeLock.request("screen").then(l=>{callLock=l}).catch(()=>{})}catch(e){}
+ speak("Je t’écoute.");callWaitSpeech().then(callListen)}
+async function callEnd(msg,say){if(!callOn)return;callOn=false;try{callRec&&callRec.abort()}catch(e){}try{callLock&&callLock.release()}catch(e){}callLock=null;
+ $("callBar").hidden=true;$("call").textContent="📞";if(msg){add("e",msg);if(say)speak(msg)}}
+function callListen(){
+ if(!callOn)return;if(busy){setTimeout(callListen,300);return}
+ callStatus("🎤 Je t’écoute… parle");let got=false;const r=new SR();callRec=r;r.lang="fr-FR";r.interimResults=false;r.maxAlternatives=1;r.continuous=false;
+ r.onresult=e=>{const txt=((e.results[0]&&e.results[0][0]&&e.results[0][0].transcript)||"").trim();if(!txt)return;got=true;callSilent=0;callHandle(txt)};
+ r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed")callEnd("Le micro est bloqué. Autorise-le dans les réglages du navigateur.");else if(e.error==="network")callEnd("Pas de connexion : la reconnaissance vocale a besoin d’Internet.")};
+ r.onend=()=>{if(!callOn||got)return;callSilent++;if(callSilent>=6){callEnd("Appel terminé : je n’entends plus rien.");return}setTimeout(callListen,350)};
+ try{r.start()}catch(e){setTimeout(callListen,500)}}
+async function callHandle(txt){const t=N(txt);
+ if(t==="stop"||/^(raccroche|au revoir|fin de l appel|termine l appel|arrete l appel|on arrete|c est tout)\b/.test(t)){await callEnd("D’accord, à bientôt !",true);return}
+ callStatus("💭 Je réfléchis…");while(busy&&callOn)await sleep(200);if(!callOn)return;
+ const before=spokeAt;await ask(txt);await sleep(300);if(!callOn)return;
+ if(spokeAt<=before){const last=chat.lastElementChild;if(last&&last.classList&&last.classList.contains("e")){const b=last.querySelector("b"),msg=last.querySelector("svg")?(b?b.textContent:"Schéma")+". Regarde le schéma à l’écran.":last.textContent;speak(String(msg).slice(0,500))}}
+ callStatus("🔊 Novi répond… (touche Couper pour passer)");await callWaitSpeech();callListen()}
+$("call").addEventListener("click",()=>{callOn?callEnd("Appel terminé."):callStart()});
+$("callEnd").addEventListener("click",()=>callEnd("Appel terminé."));
+$("callCut").addEventListener("click",()=>{if(window.speechSynthesis)speechSynthesis.cancel()});
 $("spk").addEventListener("click",()=>setVoice(!voiceOn));
 $("mic").addEventListener("click",()=>{
 if(!SR){add("e","La reconnaissance vocale n’est pas disponible sur ce navigateur. Essaie avec Chrome sur Android.");return}
@@ -450,7 +620,7 @@ cap:"Le va-et-vient allume ou éteint une lampe depuis deux endroits. La phase L
 svg:svgW(340,250,[bx(30,6,140,24,"Panneaux solaires"),ln(100,30,100,46),bx(30,46,140,24,"Protection DC"),ln(100,70,100,86),bx(30,86,140,24,"Régulateur de charge"),ln(100,110,100,126),bx(30,126,140,24,"Batterie"),ln(100,150,100,166),bx(30,166,140,24,"Protection batterie"),ln(100,190,100,206),bx(30,206,140,24,"Onduleur"),ln(170,98,210,98),bx(210,86,120,24,"Charges DC"),ln(170,218,210,218),bx(210,206,120,24,"Charges 230 V AC")].join("")),
 cap:"Système solaire autonome, en blocs : panneaux, protection DC, régulateur de charge, batterie, protection, onduleur, puis appareils en 230 V. Les appareils en courant continu se branchent sur la sortie du régulateur. Respecte la polarité (+ rouge, − noir), choisis la section des câbles selon le courant et mets l’installation à la terre."}
 ];
-function schemaFor(t){if(!/\b(schema|schemas|dessin|dessine|dessiner|circuit|cablage|branchement|montage|plan)\b/.test(t))return null;const sol=schemaSolaire(t);if(sol)return sol;const s=SCH.find(x=>x.k.some(k=>has(t,k)));if(s)return s;if(/\b(schema|schemas|dessin|dessine|dessiner)\b/.test(t))return {t:"",svg:"",cap:"Je peux te montrer ces schémas : démarrage direct, étoile-triangle, va-et-vient et installation solaire. Lequel veux-tu ?"};return null}
+function schemaFor(t){if(!/\b(schema|schemas|dessin|dessine|dessiner|circuit|cablage|branchement|montage|plan)\b/.test(t))return null;const sol=schemaSolaire(t);if(sol)return sol;const se=schemaElecFor(t);if(se)return se;const s=SCH.find(x=>x.k.some(k=>has(t,k)));if(s)return s;if(/\b(schema|schemas|dessin|dessine|dessiner)\b/.test(t))return {t:"",svg:"",cap:"Je peux te montrer ces schémas : démarrage direct, étoile-triangle, va-et-vient et installation solaire. Lequel veux-tu ?"};return null}
 async function rechercheEnLigne(q){
 const s=q.replace(/[?!.]/g," ").replace(/^\s*(c est quoi|c’est quoi|qu est ce que|qu’est-ce que|qui est|qui était|explique[- ]moi|parle[- ]moi de)\s+/i,"").trim();
 const j=await (await fetch("https://fr.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=1&srsearch="+encodeURIComponent(s))).json();
@@ -464,7 +634,7 @@ try{const sch=schemaFor(t);if(sch){const d=add("e",sch.cap);if(sch.svg){d.style.
  const bub=add("e","Je prépare une réponse…");
  if(sample){try{const msgs=hist.slice(-8).concat([{role:"user",content:INSTR+(personal?"\n\nMémoire enregistrée :\n"+personal:"")+(ctx?"\n\nConnaissance utile : "+ctx:"")+"\n\nRéponds à cette demande en tenant compte du contexte : "+q}]);const out=await sample(msgs,{cache:false,onText:({text})=>{if(text)bub.textContent=text;chat.scrollTop=chat.scrollHeight}});if(out&&out.text&&out.text.trim()){bub.textContent=out.text;record("assistant",bub.textContent);return}}catch(e){if(e&&e.code==="not_granted")sample=null}}
  bub.textContent="Je recherche dans des sources en ligne…";try{const wiki=await rechercheEnLigne(q);bub.textContent=wiki||ctx||"Je n’ai pas trouvé de réponse fiable. Essaie de reformuler ta question ou ajoute des informations à ma mémoire."}catch(e){bub.textContent=ctx||"Je n’ai pas pu joindre les sources en ligne. Vérifie ta connexion. Je peux répondre aux questions présentes dans ma base locale."}record("assistant",bub.textContent);
-}catch(err){add("e","Désolé, une erreur m’a empêché de répondre correctement. Réessaie avec une formulation plus simple.");console.error("Erreur Edison IA :",err)}finally{busy=false}}
+}catch(err){add("e","Désolé, une erreur m’a empêché de répondre correctement. Réessaie avec une formulation plus simple.");console.error("Erreur Novi IA :",err)}finally{busy=false}}
 
 /* ===== LECTURE D'UNE PHOTO (OCR) : texte imprimé, Internet requis la 1re fois ===== */
 let ocrBusy=false;
@@ -491,7 +661,48 @@ function ajusterQ(){const z=$("q");z.style.height="auto";z.style.height=Math.min
 $("q").addEventListener("input",ajusterQ);
 $("q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();if($("f").requestSubmit)$("f").requestSubmit();else $("f").dispatchEvent(new Event("submit",{cancelable:true}))}});
 ["Comment produire du courant ?","Règles de salutation","Raconte une blague 😄"].forEach(label=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>ask(label);$("chips").appendChild(b)});
-restoreHistory();if(!store.history.length)add("e","Bonjour ! Je suis Edison IA, assistant francophone créé par Edison Ahodede. Je peux discuter, expliquer, calculer et retenir les informations que tu me demandes de mémoriser. Essaie une question ci-dessous.");
+/* ===== COMPTES SUR CE TÉLÉPHONE (mot de passe haché avec PBKDF2, jamais en clair) ===== */
+const B64={e:u=>btoa(String.fromCharCode(...u)),d:s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+function usersGet(){try{return JSON.parse(localStorage.getItem("edison_users")||"{}")||{}}catch(e){return {}}}
+function usersSet(u){try{localStorage.setItem("edison_users",JSON.stringify(u));return true}catch(e){return false}}
+async function pwHash(pw,salt,it){const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);return B64.e(new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:it,hash:"SHA-256"},k,256)))}
+function sameStr(a,b){if(a.length!==b.length)return false;let r=0;for(let i=0;i<a.length;i++)r|=a.charCodeAt(i)^b.charCodeAt(i);return r===0}
+let authMode="create";
+function authView(mode){authMode=mode;$("authHome").hidden=true;$("authForm").hidden=false;$("aErr").textContent="";$("authTitle").textContent=mode==="create"?"Créer un compte":"Se connecter";$("lName").hidden=mode!=="create";$("aGo").textContent=mode==="create"?"Créer mon compte":"Me connecter";$("aPass").autocomplete=mode==="create"?"new-password":"current-password"}
+async function authGo(){const err=$("aErr");err.textContent="";const mail=$("aMail").value.trim().toLowerCase(),pw=$("aPass").value,name=$("aName").value.trim().replace(/\s+/g," ");
+ if(!window.crypto||!crypto.subtle){err.textContent="Ce navigateur ne permet pas de protéger le mot de passe. Ouvre Novi IA avec Chrome, via le lien sécurisé (https).";return}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)){err.textContent="Entre une adresse e-mail valide.";return}
+ $("aGo").disabled=true;
+ try{const users=usersGet();
+  if(authMode==="create"){
+   if(!name){err.textContent="Entre ton nom ou ton pseudonyme.";return}
+   if(pw.length<6){err.textContent="Le mot de passe doit contenir au moins 6 caractères.";return}
+   if(users[mail]){err.textContent="Un compte existe déjà avec cet e-mail. Connecte-toi.";return}
+   const first=Object.keys(users).length===0,salt=crypto.getRandomValues(new Uint8Array(16)),it=150000;
+   users[mail]={name,salt:B64.e(salt),it,hash:await pwHash(pw,salt,it),created:Date.now()};
+   if(!usersSet(users)){err.textContent="Impossible d’enregistrer le compte : le stockage du navigateur est bloqué.";return}
+   if(first){try{const old=localStorage.getItem("edison_ia_memory_v2");if(old)localStorage.setItem("edison_ia_memory_v2:u:"+mail,old)}catch(e){}}
+  }else{const u=users[mail];
+   if(!u||!sameStr(await pwHash(pw,B64.d(u.salt),u.it),u.hash)){err.textContent="E-mail ou mot de passe incorrect.";return}}
+  localStorage.setItem("edison_session",mail);try{sessionStorage.setItem("edison_welcome","full")}catch(e){}location.reload()
+ }catch(e){err.textContent="Une erreur est survenue. Réessaie."}finally{$("aGo").disabled=false}}
+function accountInit(){
+ if(SESSION_ID){const u=usersGet()[SESSION_ID];
+  if(!u){try{localStorage.removeItem("edison_session")}catch(e){}if(!sessionStorage.getItem("edison_retry")){sessionStorage.setItem("edison_retry","1");location.reload()}return}
+  const nm=u.name;$("who").hidden=false;$("whoName").textContent="👤 "+nm;
+  let msg=null;try{if(sessionStorage.getItem("edison_welcome")==="full"){sessionStorage.removeItem("edison_welcome");msg="Bienvenue sur Novi IA, "+nm+" ! 👋\n\nJe suis là pour t’aider à comprendre tes cours, résoudre tes exercices et développer tes connaissances.\n\nAlors, "+nm+", qu’aimerais-tu apprendre aujourd’hui ?"}
+   else if(!sessionStorage.getItem("edison_greeted"))msg="Content de te revoir sur Novi IA, "+nm+" ! 👋\n\nQu’aimerais-tu apprendre aujourd’hui ?";sessionStorage.setItem("edison_greeted","1")}catch(e){}
+  if(msg)add("e",msg);return}
+ let guest=false;try{guest=sessionStorage.getItem("edison_guest")==="1"}catch(e){}
+ if(!guest)$("auth").hidden=false}
+$("goCreate").addEventListener("click",()=>authView("create"));$("goLogin").addEventListener("click",()=>authView("login"));
+$("goGuest").addEventListener("click",()=>{try{sessionStorage.setItem("edison_guest","1")}catch(e){}$("auth").hidden=true});
+$("aBack").addEventListener("click",()=>{$("authForm").hidden=true;$("authHome").hidden=false});
+$("aGo").addEventListener("click",authGo);$("aShow").addEventListener("change",e=>{$("aPass").type=e.target.checked?"text":"password"});
+["aName","aMail","aPass"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();authGo()}}));
+$("logout").addEventListener("click",()=>{try{localStorage.removeItem("edison_session");sessionStorage.removeItem("edison_greeted");sessionStorage.removeItem("edison_guest")}catch(e){}location.reload()});
+restoreHistory();if(!store.history.length&&!SESSION_ID)add("e","Bonjour ! Je suis Novi IA, assistant francophone créé par Edison Ahodede. Je peux discuter, expliquer, calculer et retenir les informations que tu me demandes de mémoriser. Essaie une question ci-dessous.");
+accountInit();
 $("showMemory").addEventListener("click",()=>{renderMemory();$("memoryView").hidden=!$("memoryView").hidden});
 $("exportMemory").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(store,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="edison_memoire.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
 $("clearMemory").addEventListener("click",()=>{if(confirm("Effacer l’historique et les mémoires enregistrées dans ce navigateur ?")){store=emptyStore();saveStore();chat.innerHTML="";hist=[];add("e","Mémoire effacée. Nous pouvons repartir sur de nouvelles bases.");renderMemory()}});
