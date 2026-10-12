@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Novi IA — Assistant intelligent</title>
+<style>
+:root{--bg:#eef3fa;--card:#ffffff;--tx:#14202e;--mut:#5b6b7d;--ac:#1769e0;--ac2:#e6efff;--me:#1769e0;--mt:#fff;--bd:#d7e1ee;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e141b;--card:#18212c;--tx:#e8eef5;--mut:#93a3b5;--ac:#4c9aff;--ac2:#1c2a3d;--me:#2f6fd6;--bd:#2a3644}}
+:root[data-theme="dark"]{--bg:#0e141b;--card:#18212c;--tx:#e8eef5;--mut:#93a3b5;--ac:#4c9aff;--ac2:#1c2a3d;--me:#2f6fd6;--bd:#2a3644}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(ellipse at top,#e1ecff 0, var(--bg) 42%);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;max-width:760px;margin:0 auto;min-height:100dvh}
+header{padding:20px 18px 14px;background:linear-gradient(135deg,#102a56,#1769e0);color:#fff;border-radius:0 0 22px 22px;box-shadow:0 8px 24px #173b6a22}
+h1{margin:0;font-size:1.35rem}
+h1 span{color:#a9ceff}
+.sub{margin:4px 0 0;color:#d8e7ff;font-size:.9rem}
+details{margin:12px 16px 0;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:10px 13px;font-size:.9rem;box-shadow:0 4px 16px #102a560a}
+summary{cursor:pointer;font-weight:600}
+details p{margin:.5em 0 .2em;color:var(--mut)}
+#chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:220px}
+.b{max-width:92%;padding:11px 14px;border-radius:17px;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 2px 8px #102a560c}
+.e{align-self:flex-start;background:var(--card);border:1px solid var(--bd);border-bottom-left-radius:4px}
+.m{align-self:flex-end;background:var(--me);color:var(--mt);border-bottom-right-radius:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 6px}
+.chips button{border:1px solid var(--bd);background:var(--ac2);color:var(--ac);border-radius:999px;padding:6px 12px;font:inherit;font-size:.85rem;cursor:pointer}
+form{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px;padding:10px 16px 14px;background:var(--card);border-top:1px solid var(--bd)}
+input{flex:1;min-width:0;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:999px;padding:11px 16px;font:inherit}
+textarea{flex:1 1 100%;min-width:0;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:18px;padding:12px 16px;font:inherit;font-size:1.2rem;line-height:1.45;resize:none;min-height:7em;max-height:50vh;overflow-y:auto}
+form button{min-height:48px}
+#memoryPanel button{border:1px solid var(--bd);background:var(--ac2);color:var(--ac);border-radius:10px;padding:8px 10px;font:inherit;cursor:pointer}
+#memoryPanel #clearMemory{border-color:#d66;background:transparent;color:#c44}
+form button[type=submit]{flex:1}
+form button{border:0;background:var(--ac);color:#fff;border-radius:999px;padding:0 20px;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 4px 10px #1769e033}
+#mic,#spk,#cam,#call{padding:0 13px;background:var(--ac2);color:var(--ac);border:1px solid var(--bd);box-shadow:none;font-size:1.15rem}
+.b svg{width:100%;max-width:420px;height:auto;display:block;margin:6px 0}
+.note{padding:0 16px 12px;color:var(--mut);font-size:.75rem;text-align:center}
+
+#auth{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at top,#1d4f9e 0,#0d2a55 70%);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+#auth[hidden]{display:none}
+.ab{width:100%;max-width:380px;background:var(--card);color:var(--tx);border-radius:22px;padding:26px 22px;text-align:center;box-shadow:0 18px 50px #0006}
+.ab h2{margin:0;font-size:1.7rem}.ab h2 span{color:var(--ac)}
+.at{margin:4px 0 20px;color:var(--mut)}
+.ab button.big{display:block;width:100%;margin:10px 0;padding:14px;border:0;border-radius:999px;background:var(--ac);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.ab button.big.alt{background:var(--ac2);color:var(--ac);border:1px solid var(--bd)}
+.ab button.lnk{border:0;background:none;color:var(--ac);font:inherit;cursor:pointer;text-decoration:underline;padding:8px}
+.ab label{display:block;text-align:left;margin:10px 0 0;font-size:.9rem;color:var(--mut)}
+.ab label input{width:100%;margin-top:4px;color:var(--tx)}
+.ab label.chk{display:flex;align-items:center;gap:8px}.ab label.chk input{width:auto;margin:0}
+#aErr{min-height:1.3em;margin:8px 0;color:#c62828;font-size:.9rem}
+.an{margin:14px 0 0;font-size:.75rem;color:var(--mut)}
+#who{display:flex;align-items:center;gap:10px;margin:6px 0 0;color:#d8e7ff;font-size:.9rem}
+#who button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:3px 10px;font:inherit;font-size:.8rem;cursor:pointer}
+#who[hidden]{display:none}
+#callBar{display:flex;align-items:center;gap:8px;background:#0b3d91;color:#fff;padding:8px 14px;font-size:.9rem}
+#callBar[hidden]{display:none}
+#callStat{flex:1}
+#callBar button{border:1px solid #ffffff66;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font:inherit;cursor:pointer}
+#callEnd{background:#c62828!important;border-color:#c62828!important}
+</style>
+<meta name="application-name" content="Novi IA"><meta name="apple-mobile-web-app-title" content="Novi IA"><link rel="manifest" href="manifest.json?v=3"><meta name="theme-color" content="#0d47a1"><link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<header>
+<h1>⚡ Novi <span>IA</span></h1>
+<p class="sub">Assistant francophone • Électrotechnique, énergie, code et culture générale</p>
+<div id="who" hidden><span id="whoName"></span><button type="button" id="logout">Se déconnecter</button></div>
+</header>
+<details>
+<summary>À propos du projet</summary>
+<p>Novi IA a été conçu par son créateur pour aider à apprendre, calculer et résoudre des problèmes d'électricité et d'électrotechnique : lois de base, moteurs, protections, solaire, nombres complexes, etc.</p>
+<p>Le projet vise à rendre les connaissances techniques plus accessibles grâce à des explications simples, des calculs et une recherche documentaire en ligne. Certaines fonctions nécessitent Internet. Le créateur souhaite recueillir des avis et trouver des collaborateurs pour poursuivre son développement.</p>
+</details>
+<details id="memoryPanel"><summary>🧠 Mémoire de Novi</summary>
+<p>La mémoire est conservée dans ce navigateur si le stockage local est autorisé. Elle n’est pas synchronisée avec d’autres appareils.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button type="button" id="showMemory">Voir la mémoire</button><button type="button" id="exportMemory">Exporter la mémoire</button><button type="button" id="clearMemory">Effacer la mémoire</button></div><div id="memoryView" style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:10px;color:var(--mut)"></div></details>
+<div id="auth" hidden><div class="ab">
+<h2>⚡ NOVI <span>IA</span></h2><p class="at">Ton assistant intelligent</p>
+<div id="authHome"><button type="button" class="big" id="goCreate">Créer un compte</button><button type="button" class="big alt" id="goLogin">Se connecter</button><button type="button" class="lnk" id="goGuest">Continuer sans compte</button></div>
+<div id="authForm" hidden><h3 id="authTitle" style="margin:0 0 4px"></h3>
+<label id="lName">Nom ou pseudonyme<input id="aName" maxlength="30" autocomplete="nickname"></label>
+<label>Adresse e-mail<input id="aMail" type="email" inputmode="email" autocomplete="email"></label>
+<label>Mot de passe<input id="aPass" type="password" autocomplete="current-password"></label>
+<label class="chk"><input type="checkbox" id="aShow"> Afficher le mot de passe</label>
+<div id="aErr" role="alert"></div>
+<button type="button" class="big" id="aGo">Valider</button><button type="button" class="lnk" id="aBack">Retour</button></div>
+<p class="an">Les comptes sont enregistrés sur ce téléphone, sans serveur. Ton mot de passe n’est jamais conservé en clair. Si tu l’oublies, il faudra créer un nouveau compte.</p>
+</div></div>
+<div id="callBar" hidden><span id="callStat">📞 Appel…</span><button type="button" id="callCut">Couper</button><button type="button" id="callEnd">Raccrocher</button></div>
+<div id="chat" aria-live="polite"></div>
+<div class="chips" id="chips"></div>
+<form id="f" autocomplete="off">
+<textarea id="q" rows="4" placeholder="Pose ta question à Novi…" enterkeyhint="send" aria-label="Ta question"></textarea>
+<button type="button" id="cam" aria-label="Envoyer une photo à lire">📷</button><button type="button" id="call" aria-label="Appel vocal avec Novi">📞</button><button type="button" id="mic" aria-label="Parler à Novi">🎤</button><button type="button" id="spk" aria-label="Activer la voix de Novi">🔇</button><button type="submit">Envoyer</button>
+</form>
+<input type="file" id="img" accept="image/*" hidden>
+<div class="note">Novi IA peut se tromper : vérifie toujours avant d'intervenir sur une installation électrique.</div>
+<script>
+const $=id=>document.getElementById(id);
+const N=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’\-]/g," ").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+const has=(t,...a)=>a.some(x=>(" "+t+" ").includes(" "+x+" "));
+const KB=[
+["electrotechnique","L'électrotechnique étudie la production, le transport, la transformation et l'utilisation de l'énergie électrique (courants forts) : machines, installations, protections, automatismes et énergies renouvelables."],
+["electronique","L'électronique étudie et utilise les composants et circuits qui contrôlent les signaux et le courant électrique : diodes, transistors, résistances, condensateurs, circuits intégrés, alimentations et cartes électroniques. Elle est utilisée dans les téléphones, téléviseurs, ordinateurs, automatismes et appareils de mesure."],
+["electronique analogique","L'électronique analogique traite des signaux continus qui varient dans le temps. Elle utilise notamment résistances, condensateurs, diodes, transistors et amplificateurs opérationnels."],
+["electronique numerique","L'électronique numérique traite des informations sous forme de valeurs discrètes, souvent 0 et 1. Elle est utilisée dans les microcontrôleurs, ordinateurs, automates et systèmes numériques."],
+["physique","La physique est une science qui étudie la matière, l'énergie, le mouvement, les forces et les lois qui décrivent la nature."],
+["chimie","La chimie étudie la composition, les propriétés et les transformations de la matière."],
+["mathematique|mathematiques","Les mathématiques étudient notamment les nombres, les formes, les structures, les relations et les raisonnements logiques."],
+["intelligence artificielle|ia","L'intelligence artificielle (IA) regroupe des méthodes informatiques permettant à un système d'effectuer des tâches comme comprendre du texte, reconnaître des images, traduire ou produire des réponses. Ses résultats doivent être vérifiés."],
+["electron|electrons","Un électron est une particule subatomique portant une charge électrique négative. Le déplacement des électrons dans un conducteur métallique contribue au courant électrique."],
+["electricite","L'électricité est liée à la présence et au déplacement de charges électriques. Elle permet d'alimenter les appareils, l'éclairage, les moteurs et les machines."],
+["informatique","L'informatique concerne le traitement automatique de l'information à l'aide d'ordinateurs et de programmes."],
+["energie","L'énergie est la capacité d'un système à produire un changement ou un travail. En électricité, elle se mesure souvent en joules (J) ou en kilowattheures (kWh)."],
+["loi d ohm|ohm","Loi d'Ohm : U = R × I, donc I = U / R et R = U / I. Exemple : 230 V sur 46 Ω donnent 5 A."],
+["tension|volt","La tension U est la « pression » électrique entre deux points. Elle se mesure en volts (V), avec un voltmètre branché en parallèle."],
+["courant|intensite|ampere","Le courant I est la quantité de charges qui circule par seconde. Il se mesure en ampères (A), avec un ampèremètre en série ou une pince ampèremétrique."],
+["resistance","La résistance R s'oppose au passage du courant. Elle se mesure en ohms (Ω), toujours hors tension."],
+["puissance|watt","Puissance : P = U × I en continu. En monophasé P = U × I × cos φ ; en triphasé P = √3 × U × I × cos φ. Unité : le watt (W)."],
+["energie|kwh","Énergie : E = P × t. Avec P en kW et t en heures, E est en kWh. Exemple : 2 kW pendant 3 h = 6 kWh."],
+["triphase|monophase|trois phases","Monophasé : 230 V (phase + neutre). Triphasé : trois phases décalées de 120°, 400 V entre phases, adapté aux moteurs et aux fortes puissances."],
+["disjoncteur","Le disjoncteur protège un circuit contre les surcharges et les courts-circuits, et se réarme. Son calibre doit protéger le câble."],
+["differentiel","Le différentiel détecte une fuite de courant vers la terre. 30 mA protège les personnes ; on le teste avec le bouton T."],
+["terre|mise a la terre","La mise à la terre écoule les courants de défaut vers le sol pour protéger les personnes. Fil vert-jaune, piquet de terre, résistance de terre la plus faible possible."],
+["contacteur","Le contacteur est un interrupteur commandé par une bobine : contacts principaux pour la puissance, contacts auxiliaires pour la commande."],
+["relais thermique","Le relais thermique protège un moteur contre les surcharges. On le règle sur le courant nominal de la plaque du moteur."],
+["moteur|moteur asynchrone","Le moteur asynchrone triphasé a un stator qui crée un champ tournant et un rotor en cage d'écureuil. Vitesse de synchronisme : n = 60·f / p (1500 tr/min à 50 Hz avec 2 paires de pôles)."],
+["court circuit|surcharge","Court-circuit : contact direct entre conducteurs, courant très élevé, coupé par disjoncteur ou fusible. Surcharge : courant trop fort pendant un certain temps, qui chauffe les câbles."],
+["transformateur","Le transformateur change la tension en alternatif : m = U2/U1 = N2/N1. Abaisseur si U2 < U1, élévateur sinon."],
+["solaire|photovoltaique|panneau","Une installation solaire autonome comprend panneaux, régulateur de charge, batteries, onduleur et protections. On dimensionne d'après la consommation journalière (Wh) et les heures de plein soleil."],
+["batterie","Capacité en Ah ; énergie en Wh = V × Ah. En plomb-acide on évite de décharger au-delà de 50 % environ."],
+["onduleur","L'onduleur transforme le courant continu en alternatif 230 V. Choisis une puissance supérieure aux appareils, avec une marge pour le démarrage des moteurs."],
+["impedance|rlc","Impédance complexe : ZR = R, ZL = jLω, ZC = 1/(jCω), avec ω = 2πf. RLC série : Z = R + j(Lω − 1/(Cω))."],
+["nombre complexe|nombres complexes|complexe","Un nombre complexe s'écrit Z = a + jb (j² = −1). Module r = √(a²+b²), argument θ = arctan(b/a). On s'en sert en alternatif pour traiter ensemble amplitude et déphasage."],
+["cos phi|facteur de puissance","cos φ = P / S : rapport entre puissance active et apparente. Un moteur a souvent cos φ ≈ 0,8 ; on l'améliore avec des condensateurs."],
+["securite|consignation","Avant d'intervenir : séparer, condamner, vérifier l'absence de tension (VAT), puis mettre à la terre et en court-circuit si nécessaire."],
+["variateur","Le variateur de vitesse change la fréquence et la tension pour piloter la vitesse d'un moteur asynchrone."],
+["automate|api","Un automate programmable (API) fonctionne en cycle : lecture des entrées, exécution du programme, mise à jour des sorties."],
+["videosurveillance|camera","Caméras analogiques : coaxial + DVR. Caméras IP : câble réseau (100 m max) + NVR, avec PoE possible. Prévoir alimentation, stockage et protection contre l'humidité."],
+["maintenance","Maintenance préventive : avant la panne, selon un programme. Corrective : après la panne."],
+["energie renouvelable|energies renouvelables|renouvelable|renouvelables","Une énergie renouvelable vient d'une source qui se reconstitue à l'échelle humaine : soleil, vent, eau (hydraulique), biomasse, chaleur de la terre (géothermie), mers. Les énergies fossiles (pétrole, gaz, charbon) s'épuisent. Le nucléaire n'émet pas de CO2 en fonctionnement mais n'est pas renouvelable (uranium). Limite du solaire et de l'éolien : ils varient avec la météo, d'où le besoin de stockage et d'un réseau."],
+["produire du courant|produire de l electricite|production d electricite|production electrique|comment produire|produit le courant","Pour produire du courant, on convertit une énergie en électricité. Le principe le plus courant est l'induction (Faraday) : un aimant qui tourne près d'une bobine crée une tension. Une source d'énergie (vapeur, eau, vent, moteur diesel) fait tourner une turbine ou un moteur qui entraîne un alternateur. Autres voies : cellules photovoltaïques (lumière → courant continu), piles et batteries (réaction chimique), thermocouples (chaleur)."],
+["alternateur|alternateurs|generatrice|dynamo","Alternateur : un rotor (inducteur : électroaimant ou aimants) tourne dans un stator (bobinages induits) et produit du courant alternatif. Fréquence : f = p × n / 60 (p paires de pôles, n en tr/min). Avec 2 paires de pôles, 1500 tr/min donnent 50 Hz. La dynamo, elle, produit du courant continu."],
+["chaine energetique|systeme energetique|systemes energetiques|reseau electrique|transport d electricite|haute tension","Le système électrique : production (centrales) → élévation de tension (transformateurs) → transport en haute tension → postes d'abaissement → distribution en moyenne puis basse tension (230/400 V) → consommateurs. On élève la tension car, pour une même puissance, le courant diminue et les pertes en ligne P = R × I² aussi. La production doit égaler la consommation à chaque instant."],
+["centrale electrique|centrales electriques|types de centrales|centrale electrique fonctionne","Une centrale électrique convertit une énergie primaire en électricité. Principaux types : thermique à flamme (charbon, gaz, fioul), nucléaire, hydraulique, éolienne, solaire (photovoltaïque ou thermodynamique), biomasse/biogaz, géothermique, et groupes électrogènes diesel pour le secours ou les sites isolés. La plupart font tourner une turbine couplée à un alternateur (sauf le solaire photovoltaïque)."],
+["centrale thermique|centrale a vapeur|centrale a gaz|cycle combine","Centrale thermique : un combustible (charbon, gaz, fioul) chauffe de l'eau ; la vapeur sous pression fait tourner une turbine qui entraîne l'alternateur, puis elle est condensée et réutilisée. Rendement d'environ 35 à 45 %. Les centrales à gaz à cycle combiné (turbine à gaz + turbine à vapeur) atteignent environ 55 à 60 %. Elles émettent du CO2."],
+["centrale hydroelectrique|centrale hydraulique|barrage|hydroelectricite|energie hydraulique","Centrale hydroélectrique : l'eau retenue par un barrage tombe d'une hauteur H et fait tourner une turbine (Pelton, Francis, Kaplan) couplée à un alternateur. Puissance : P(kW) ≈ 9,81 × Q × H × η (Q en m³/s, H en m, η ≈ 0,85 à 0,9). Exemple : Q = 10 m³/s, H = 20 m, η = 0,85 → P ≈ 1668 kW. Exemple régional : le barrage de Nangbéto, sur le Mono (Togo/Bénin)."],
+["energie eolienne|eolienne|eoliennes|eolien","Éolienne : le vent fait tourner les pales, qui entraînent une génératrice (souvent via un multiplicateur). Puissance du vent : P = ½ × ρ × A × v³ × Cp (ρ ≈ 1,2 kg/m³ pour l'air, A surface balayée, v vitesse du vent, Cp ≤ 0,593 : limite de Betz). Comme P dépend de v³, doubler la vitesse du vent multiplie la puissance par 8."],
+["centrale nucleaire|nucleaire|fission","Centrale nucléaire : la fission de noyaux d'uranium dans un réacteur libère de la chaleur qui produit de la vapeur pour une turbine et un alternateur. Elle fournit beaucoup d'énergie sans émettre de CO2 en fonctionnement, mais produit des déchets radioactifs et exige des règles de sûreté très strictes."],
+["groupe electrogene|groupes electrogenes|generateur diesel|centrale diesel","Groupe électrogène : un moteur thermique (diesel ou essence) entraîne un alternateur. Il sert de secours ou de source sur les sites isolés. Prévois une puissance (kVA) avec marge pour le démarrage des moteurs, entretiens huile et filtres, et ne le fais jamais tourner dans un local fermé (gaz d'échappement mortels). Il consomme du carburant et émet du CO2."],
+["biomasse|biogaz|methanisation|biocarburant|biocarburants|culture energetique|cultures energetiques","La biomasse (bois, résidus agricoles, déchets) produit de l'énergie par combustion ou méthanisation (le biogaz, riche en méthane, alimente un moteur-générateur). Les cultures énergétiques (canne à sucre, maïs, manioc pour l'éthanol ; palmier à huile, jatropha pour le biodiesel) fournissent des biocarburants. Limite : elles peuvent concurrencer les cultures alimentaires et demander terres et eau."],
+["agrivoltaique|agrivoltaisme|pompage solaire|irrigation solaire","Agrivoltaïsme : des panneaux solaires sont installés au-dessus ou entre des cultures sur la même parcelle ; l'ombre partielle peut protéger certaines plantes de la chaleur. Pompage solaire : des panneaux alimentent une pompe pour irriguer sans carburant ; on stocke souvent l'eau dans un réservoir plutôt que l'électricité dans des batteries."],
+["geothermie|energie marine|energies marines|maremotrice|houlomotrice","Géothermie : la chaleur du sous-sol produit de la vapeur pour une turbine, ou chauffe directement des bâtiments. Énergies marines : marémotrice (marées), houlomotrice (vagues) et hydroliennes (courants). Elles sont peu répandues et très dépendantes du site."],
+["rendement|efficacite energetique","Rendement η = puissance (ou énergie) utile / puissance (ou énergie) absorbée, toujours inférieur à 1. Exemple : un moteur absorbe 5 kW et fournit 4 kW utiles → η = 0,8 = 80 %. Le reste est perdu surtout en chaleur. Le rendement global d'une chaîne est le produit des rendements de chaque étape."],
+["stockage d energie|stockage energie|stockage de l energie|hydrogene","Stocker l'énergie compense les variations du solaire et de l'éolien : batteries (plomb, lithium), stations de transfert d'énergie par pompage (STEP : on remonte l'eau en période creuse, puis on la turbine), hydrogène, volants d'inertie, stockage thermique. Chaque solution a son coût, son rendement et sa durée de stockage."],
+["mix energetique|mix electrique|energie primaire|energie finale|sources d energie","Le mix énergétique est la répartition des sources utilisées par un pays pour produire son énergie (hydraulique, gaz, solaire, etc.). Énergie primaire : source brute (pétrole, vent, soleil). Énergie finale : celle livrée au consommateur (électricité, carburant). Énergie utile : le service obtenu (lumière, mouvement). À chaque étape, il y a des pertes."],
+["electricite au benin|energie au benin|sbee","Au Bénin, la SBEE (Société Béninoise d'Énergie Électrique) assure la distribution de l'électricité. Une part importante de l'électricité consommée est importée des pays voisins, et le pays développe aussi le solaire et ses propres capacités de production. Pour des chiffres à jour, consulte les sites officiels (SBEE, ministère de l'énergie)."],
+["unite d energie|unites d energie|joule|kilowattheure|difference puissance energie","Puissance (watt, W) = rythme auquel l'énergie est produite ou consommée. Énergie = puissance × temps : joule (1 J = 1 W × 1 s) ou wattheure (1 kWh = 3 600 000 J). Exemple : une lampe de 100 W allumée 10 h consomme 1 kWh. Ne pas confondre kW (puissance) et kWh (énergie)."],
+["apprendre le code|apprendre a programmer|programmation|algorithme|c est quoi programmer|apprendre a coder","Programmer, c'est écrire des instructions précises qu'un ordinateur exécute. Un algorithme est la suite d'étapes qui résout un problème (comme une recette de cuisine). Méthode : comprendre le problème, écrire l'algorithme, le traduire dans un langage (Python, JavaScript…), tester, corriger. Conseil : commence par Python, écris de petits programmes et pratique chaque jour."],
+["variable python|variables en python|types de donnees|python variable|variable en python","En Python, une variable stocke une valeur : age = 25, nom = 'Edison', tension = 230.5. Types courants : int (entier), float (décimal), str (texte), bool (True/False), list, dict. print(nom) affiche la valeur ; input() lit ce que tape l'utilisateur ; int('5') convertit un texte en entier."],
+["condition python|boucle|boucles|if else|boucle for|boucle while","Condition : if tension > 240: print('Trop haute') elif tension < 200: print('Trop basse') else: print('Normale'). Boucle for : for i in range(5): print(i) répète 5 fois. Boucle while : while courant > 0: ... tant que la condition est vraie. En Python, l'indentation (4 espaces) délimite les blocs."],
+["fonction python|definir une fonction|liste python|dictionnaire python|fonction en python","Fonction : def puissance(u, i): return u * i ; puissance(230, 5) donne 1150. Liste : appareils = ['lampe', 'fer'] ; appareils.append('tv') ajoute un élément ; appareils[0] donne le premier. Dictionnaire : prix = {'fil': 1000, 'prise': 300} ; prix['fil'] donne 1000. Les fonctions évitent de répéter du code."],
+["html|css|javascript|page web|site web|creer un site","Un site web combine HTML (structure : titres, paragraphes, boutons), CSS (apparence : couleurs, tailles, mise en page) et JavaScript (comportement : réagir aux clics, calculer). Exemple minimal : <h1>Bonjour</h1> <button onclick=\"alert('Salut')\">Clique</button>. Enregistre le texte dans un fichier .html et ouvre-le dans un navigateur pour le tester."],
+["erreur de code|bug|debogage|debugger|deboguer|corriger un code","Déboguer : 1) lis le message d'erreur en entier, surtout la dernière ligne et le numéro de ligne ; 2) vérifie indentation, guillemets et deux-points ; 3) affiche des valeurs avec print() pour suivre le programme ; 4) isole la partie qui échoue ; 5) cherche le message d'erreur en ligne. Erreurs courantes : SyntaxError (écriture), NameError (variable inconnue), TypeError (mauvais type), IndentationError."],
+["arduino|microcontroleur|raspberry","Un microcontrôleur (Arduino, ESP32…) est un petit ordinateur qui lit des capteurs et commande des sorties (LED, relais, moteurs). Exemple Arduino : pinMode(13, OUTPUT); digitalWrite(13, HIGH); delay(1000); digitalWrite(13, LOW); delay(1000); fait clignoter une LED. Pour commander un appareil en 230 V, utilise un relais ou un module adapté, avec une isolation sûre."],
+["salutation|salutations|comment saluer|regles de salutation|savoir saluer|bien saluer","Bien saluer : dis Bonjour (jusqu'en fin d'après-midi) ou Bonsoir (le soir), avec le sourire et en regardant la personne. Salue en premier en entrant quelque part, et salue d'abord les aînés par respect. Poignée de main ferme mais douce ; n'impose pas le contact si l'autre ne le propose pas. Dans beaucoup de régions d'Afrique de l'Ouest, prendre le temps de demander des nouvelles (famille, travail) est un signe de respect. Avec les inconnus, dis Madame ou Monsieur."],
+["politesse|savoir vivre|bonnes manieres|regles de politesse|etre poli","Règles de politesse : dire s'il vous plaît, merci, pardon et excusez-moi ; ne pas couper la parole ; écouter avec attention ; être ponctuel et prévenir en cas de retard ; ne pas crier ni se moquer ; remercier après un service ; céder sa place aux personnes âgées, aux femmes enceintes et aux personnes fragiles ; garder son téléphone discret en réunion, à table ou au culte."],
+["tutoiement|vouvoiement|tutoyer|vouvoyer","On vouvoie (vous) les inconnus, les personnes plus âgées, les supérieurs et dans les situations formelles (entretien, administration) ; on tutoie (tu) la famille, les amis et les enfants. En cas de doute, mieux vaut vouvoyer et attendre que l'autre propose de se tutoyer."],
+["politesse au travail|savoir vivre au travail|entretien d embauche|bonne conduite|ecrire un mail|lettre formelle","Au travail ou en entretien : arrive en avance, tenue propre et adaptée, salue chacun, regarde ton interlocuteur, parle calmement, écoute sans couper, remercie à la fin. Pour un e-mail ou une lettre : objet clair, formule d'appel (Madame, Monsieur), texte court et poli, formule de politesse finale, signature."],
+["culture generale","La culture générale est l'ensemble des connaissances sur le monde : histoire, géographie, sciences, arts, langues, société. Pour la développer : lire, suivre l'actualité, poser des questions, apprendre un fait nouveau chaque jour et en parler. Propose-moi un sujet (le Bénin, les continents, l'énergie…) et je t'en dis plus."],
+["histoire du benin|dahomey|independance du benin|culture du benin|vodun|ouidah","Le Bénin (ancien Dahomey) a proclamé son indépendance le 1er août 1960. Capitale officielle : Porto-Novo ; Cotonou est la capitale économique. Langue officielle : le français ; de nombreuses langues nationales sont parlées (fon, yoruba, bariba, dendi, etc.). Le pays est connu pour ses royaumes historiques (Abomey), pour le vodun (religion traditionnelle née dans la région) et pour la ville de Ouidah."],
+["continents|oceans|geographie du monde|systeme solaire","Il y a 5 ou 6 continents selon les conventions : Afrique, Amérique, Asie, Europe, Océanie (et l'Antarctique). Les cinq océans : Pacifique, Atlantique, Indien, Arctique et Austral. L'Afrique compte 54 États membres de l'ONU. La Terre tourne sur elle-même en 24 h et autour du Soleil en environ 365 jours."],
+["section de cable|section d un cable|choisir un cable|choisir la section|calibre du disjoncteur|chute de tension","Choisir un câble : 1) calcule le courant : I = P / (U × cos φ) en monophasé, I = P / (√3 × U × cos φ) en triphasé ; 2) prends une section dont le courant admissible dépasse I. Calibres maximum usuels du disjoncteur selon la NF C 15-100 (cuivre) : 1,5 mm² → 16 A ; 2,5 mm² → 20 A ; 4 mm² → 25 A ; 6 mm² → 32 A ; 10 mm² → 40 A. 3) Vérifie la chute de tension (≤ 3 % éclairage, ≤ 5 % autres usages) : ΔU = 2 × 0,023 × L × I / S en monophasé (L en m, S en mm²). Exemple : 20 m, 16 A, 2,5 mm² → ΔU ≈ 5,9 V (2,6 %). Le disjoncteur doit toujours protéger le câble. Vérifie la norme appliquée chez toi."],
+["demarrage direct|demarrage direct d un moteur|demarrer un moteur","Démarrage direct d'un moteur triphasé : un contacteur KM relie le moteur au réseau. Commande : bouton arrêt S1 (contact NF) en série, bouton marche S2 (contact NO) avec le contact d'automaintien de KM en parallèle. Protection : disjoncteur magnétique ou fusibles (court-circuit) + relais thermique réglé sur le courant nominal (surcharge). Simple, mais l'appel de courant est de 5 à 8 fois le courant nominal : réservé aux petits et moyens moteurs."],
+["etoile triangle|demarrage etoile triangle|etoile-triangle","Démarrage étoile-triangle : au départ le moteur est couplé en étoile (chaque enroulement reçoit U/√3), ce qui divise par 3 le courant et le couple d'appel ; après quelques secondes (temporisateur) on passe en triangle. Matériel : 3 contacteurs (réseau KM1, étoile KM2, triangle KM3), un temporisateur, un relais thermique. Condition : la plaque doit indiquer 400 V en triangle (ex. 230/400 V) sur un réseau 400 V. KM2 et KM3 ne doivent jamais être fermés ensemble (verrouillage), sinon c'est un court-circuit."],
+["plaque signaletique|plaque du moteur|lire la plaque","Plaque d'un moteur : U (ex. 230/400 V : tension du couplage triangle/étoile), I (courant nominal, ex. 5,2/3 A : le plus grand courant va avec la plus petite tension), P (puissance utile en kW), cos φ, n (vitesse en tr/min), f (50 Hz), IP (protection poussière/eau), classe d'isolation. Règle le relais thermique sur le courant nominal correspondant à ton couplage."],
+["schema electrique|lire un schema|symboles electriques|schema de puissance|schema de commande","Schéma de puissance (gros traits : alimentation, contacteur, thermique, moteur) et schéma de commande (boutons, bobine, auxiliaires). Repères courants : QF disjoncteur, KM contacteur, FR relais thermique, S bouton, H voyant, M moteur, L phase, N neutre, PE terre. Contact NO (ouvert au repos) : 13-14 ; NC (fermé au repos) : 11-12 ou 21-22 ; bobine : A1-A2 ; pôles de puissance : 1-2, 3-4, 5-6. Lis le schéma en suivant le courant de la source vers la charge."],
+["depannage|depanner|diagnostic de panne|trouver une panne|panne electrique|methode de depannage","Dépanner méthodiquement : 1) écoute l'utilisateur et observe le symptôme ; 2) vérifie les causes simples (alimentation, disjoncteur, fusible, arrêt d'urgence) ; 3) consigne et vérifie l'absence de tension avant tout travail ; 4) remonte du récepteur vers la source, ou coupe le circuit en deux moitiés ; 5) mesure (tension, continuité, isolement) et compare à ce qui est attendu ; 6) remplace le composant défaillant et cherche la cause ; 7) teste, remets en service, note l'intervention. Ne court-circuite jamais une protection pour tester."],
+["moteur ne demarre pas|moteur ne tourne pas|moteur qui ne demarre pas|moteur ronfle|moteur en panne","Moteur qui ne démarre pas : 1) tension présente sur les 3 phases (une phase absente = ronflement, risque de brûler le moteur) ; 2) protections : disjoncteur, relais thermique déclenché ; 3) contacteur : la bobine reçoit-elle la tension ? les contacts ferment-ils ? 4) commande : boutons, arrêt d'urgence, fins de course ; 5) moteur : continuité des enroulements, isolement au mégohmmètre, arbre bloqué mécaniquement ; 6) en monophasé : condensateur de démarrage. Mesures de résistance toujours hors tension."],
+["dimensionner une installation solaire|dimensionnement solaire|calculer une installation solaire|combien de panneaux|installation solaire complete|dimensionnement photovoltaique","Dimensionner un système solaire autonome : 1) liste les appareils : P (W) × heures par jour = Wh/jour ; additionne → Ec. 2) Panneaux : Pc = Ec / (Hs × k) ; Hs = heures de plein soleil (environ 4 à 5,5 h/jour sous nos latitudes, à vérifier), k ≈ 0,6 à 0,75 (pertes). 3) Batterie : C(Ah) = Ec × jours d'autonomie / (U × DoD × η) ; DoD ≈ 0,5 plomb, 0,8 lithium. 4) Régulateur : courant ≥ Pc / U batterie, +25 %. 5) Onduleur : puissance ≥ appareils simultanés + marge de démarrage (moteurs, frigo ×3 à 5). Exemple : 600 Wh/j, Hs = 5, k = 0,7 → Pc ≈ 171 W → 2 panneaux de 100 Wc ; batterie 12 V, 1 jour, DoD 0,5, η 0,85 → ≈ 118 Ah → 120 Ah."],
+["regulateur de charge|regulateur solaire|mppt|pwm","Régulateur de charge : protège la batterie contre la surcharge et la décharge profonde. PWM : simple et économique, la tension des panneaux doit correspondre à celle de la batterie. MPPT : cherche le point de puissance maximale et transforme l'excédent de tension en courant (+10 à 30 % de rendement), adapté aux grands champs. Choisis un courant ≥ Isc totale × 1,25 et une tension d'entrée maximale au-dessus de la tension à vide (Voc) des panneaux en série, surtout par temps froid."],
+["installer la videosurveillance|installation de camera|installer une camera|installer des cameras|stockage videosurveillance","Installer la vidéosurveillance : 1) repère les zones (entrées, accès, angles morts) ; 2) type : analogique (coaxial + DVR) ou IP (câble réseau jusqu'à 100 m + NVR, PoE possible) ; 3) alimentation : 12 V par caméra avec un bloc adapté (courant total + 20 %) ou PoE ; 4) câbles en gaine, loin des câbles de puissance, connecteurs étanches ; 5) disque dur : environ 10 à 40 Go par jour et par caméra selon la résolution et les réglages ; 6) pose en hauteur (2,5 à 3 m), à l'abri de la pluie et du soleil direct ; 7) change les mots de passe par défaut."],
+["antenne parabolique|installer une antenne|installation d antenne|pointer une parabole|decodeur","Installer une antenne parabolique (ex. Canal+) : choisis un emplacement dégagé en direction du satellite, fixe solidement le mât et la parabole, monte le LNB, tire un câble coaxial (connecteurs F bien serrés et protégés de l'eau) jusqu'au décodeur. Pointe en réglant azimut, élévation et polarisation avec un pointeur de satellite ou le menu de signal du décodeur ; serre quand niveau et qualité sont maximaux. Prévois mise à la terre et parafoudre. Les angles exacts dépendent du satellite et du pays : suis les consignes de l'opérateur."],
+["multimetre|multimetres","Multimètre : tension (V alternatif ou continu) en parallèle ; courant (A) en série, cordon sur la bonne borne (10 A pour les gros courants) ; résistance et continuité (bip) HORS TENSION ; commence par le plus grand calibre en cas de doute. Erreur dangereuse : mesurer une tension avec un cordon sur la borne ampère = court-circuit. Teste ton appareil sur une source connue avant et après une vérification d'absence de tension."],
+["pince amperemetrique|pince ampermetrique|mesurer un courant","Pince ampèremétrique : mesure le courant sans ouvrir le circuit, en entourant UN SEUL conducteur (une phase, pas le câble entier : les champs s'annulent et l'on lit 0). Utile pour régler le thermique d'un moteur, voir le déséquilibre entre phases, vérifier la consommation. Choisis AC ou DC selon le courant."],
+["megohmmetre|mesurer l isolement|isolement electrique","Mégohmmètre : mesure l'isolement (en MΩ) en appliquant une tension élevée (souvent 500 V ou 1000 V), circuit HORS TENSION et appareils électroniques débranchés. Repère usuel en basse tension : au moins 0,5 à 1 MΩ selon la norme. Mesure entre phases et entre chaque phase et la terre. Décharge le circuit après la mesure."],
+["cinq regles|5 regles|regles de securite electrique|consignation electrique|habilitation","Les 5 règles avant d'intervenir : 1) séparer le circuit de toute source ; 2) condamner (cadenas, étiquette) ; 3) identifier le circuit ; 4) vérifier l'absence de tension (VAT) avec un appareil adapté ; 5) mettre à la terre et en court-circuit si nécessaire. Ajoute : gants isolants, lunettes, chaussures isolantes, outils isolés ; ne travaille jamais seul sur un risque élevé ; ne suppose jamais qu'un circuit est coupé sans le vérifier."],
+["erreurs frequentes|accident electrique|danger electrique|electrisation|choc electrique","Erreurs qui causent des accidents : travailler sous tension pour aller vite ; se fier à un interrupteur sans vérifier ; oublier de remettre la terre ; mauvais serrage des connexions (échauffement, incendie) ; câble sous-dimensionné ; rallonges surchargées ; mains mouillées ; disjoncteur trop gros pour le câble ; neutre coupé ou inversé. Un courant de l'ordre de 30 mA traversant le corps est dangereux, d'où le différentiel 30 mA. En cas de choc, coupe d'abord l'alimentation avant de toucher la victime, et appelle les secours."],
+["couleur des fils|couleurs des fils|couleur du fil|code couleur","Couleurs usuelles (norme européenne/CEI) : terre = vert-jaune (jamais autre chose) ; neutre = bleu clair ; phases = marron, noir, gris (le rouge est aussi toléré). En continu (solaire) : positif rouge, négatif noir. Respecte les couleurs déjà présentes dans l'installation et vérifie la norme appliquée chez toi."],
+["normes electriques|norme electrique|cei 60364","Une norme fixe les règles de conception et de sécurité d'une installation. En basse tension, beaucoup de pays francophones s'appuient sur la NF C 15-100 (France) et la CEI 60364 (internationale). Elles imposent par exemple le différentiel 30 mA, la mise à la terre, des sections minimales et des protections. Vérifie les règles locales (au Bénin, renseigne-toi auprès de la SBEE) et consulte toujours le texte officiel à jour."],
+["qui est thomas edison|thomas edison|thomas alva edison","Thomas Alva Edison (1847-1931) était un inventeur et entrepreneur américain. Il est connu pour avoir mis au point une ampoule électrique à incandescence pratique, pour le phonographe et pour plus de mille brevets. Il a créé à Menlo Park un laboratoire de recherche organisé, avec une équipe, et a persévéré à travers de très nombreux essais. C'est l'idole de mon créateur."],
+["ton projet|ton objectif|tes objectifs|ton but|ta mission|ton reve|pourquoi tu existes|ton histoire|quel est ton projet|quel est ton objectif","Je suis Novi IA, un assistant francophone créé par son créateur, électrotechnicien. Nos objectifs : 1) aider à apprendre et à résoudre des problèmes d'électricité, d'électrotechnique et de solaire ; 2) enseigner aussi les énergies renouvelables, les centrales, le code et la culture générale ; 3) respecter les bonnes manières (salutations, politesse) ; 4) retenir ce qu'on m'apprend ; 5) devenir une vraie assistante IA qui comprend le sens des questions, calcule et, plus tard, écoute et parle. Mon créateur rêve de bâtir quelque chose de plus grand : je dois rester fidèle à ce but."],
+["collaborer|collaboration|soutenir edison|devenir partenaire|aider edison|contacter ton createur","Le projet Novi est ouvert aux échanges : tu peux tester l'assistant, donner ton avis ou proposer des idées. Pour en parler avec son créateur, demande-moi ses coordonnées."],
+["famille ahodede|la famille ahodede|les ahodede|histoire ahodede|histoire de la famille ahodede|ahodede abomey|connais tu la famille ahodede","Oui, je connais la famille AHODEDE. Elle est établie à Abomey. Ses ancêtres y ont été amenés par le roi Guezo, dont ils étaient des fidèles et les prêtres de Fâ. Aujourd'hui, c'est l'une des plus grandes familles d'Abomey."],
+["roi guezo|qui est guezo|guezo|roi ghezo|ghezo|roi gezo|gezo","Guezo (écrit aussi Ghézo ou Gezo) est le neuvième roi d'Abomey (royaume du Dahomey, aujourd'hui Bénin). Il a régné de 1818 à 1858, une période considérée comme l'apogée du Dahomey. Il était le fils du roi Agonglo ; son fils Glélé lui a succédé, puis Béhanzin, fils de Glélé. Les ancêtres de la famille AHODEDE d'Abomey étaient ses fidèles et ses prêtres de Fâ."],
+["rodriguez paul|paul rodriguez|qui est rodriguez paul|qui est paul rodriguez","Rodriguez Paul est une personne qui a fait le BTP (bâtiment et travaux publics) et le génie civil. C'est quelqu'un qui fait un excellent travail."]
+].map(([k,v])=>[k.split("|").map(N),v]);
+
+/* ===== FICHES DU GUIDE ILLUSTRÉ DES SCHÉMAS (PDF du créateur) ===== */
+const GUIDEKB=[["lire un schema electrique|comment lire un schema|lecture d un schema|symboles electriques", "Un schéma représente les fonctions et les connexions d’un circuit, pas toujours la position physique des appareils. Pour le lire : suis les conducteurs d’un point à l’autre, repère les symboles, puis vérifie le calibre et le type des appareils dans la documentation technique. Avant toute intervention : coupe, consigne et vérifie l’absence de tension avec un appareil adapté."], ["couleurs des conducteurs|couleur des fils|couleur du fil|code couleur electrique|fil de phase couleur|couleur de la phase|couleur du neutre|couleur de la terre", "Dans les schémas pédagogiques : phase L en rouge, neutre N en bleu clair, terre PE en vert, retour lampe ou commande en orange/violet, et L1/L2/L3 en rouge/jaune/bleu (repères du guide seulement).\nEn réalité, les couleurs doivent respecter la réglementation applicable : le jaune/vert est réservé au conducteur de protection PE et le bleu normalement au neutre. Ne jamais identifier un fil uniquement par sa couleur : vérifie le circuit et les repérages."], ["composants a connaitre|role de l interrupteur|role du contacteur|role du differentiel|role du disjoncteur|role de la terre|a quoi sert un contacteur|a quoi sert un differentiel|a quoi sert un relais thermique", "• Interrupteur : ouvre ou ferme un circuit d’éclairage.\n• Disjoncteur : protège contre les surintensités selon son type et son calibre.\n• Différentiel : détecte un courant de fuite selon sa sensibilité.\n• Contacteur : commute une charge de puissance à partir d’une commande.\n• Relais thermique : protège un moteur contre certaines surcharges.\n• Terre (PE) : fonction de protection, pas un retour normal du courant."], ["simple allumage|va et vient ou simple allumage|circuit d eclairage simple|allumer une lampe depuis un seul endroit", "Simple allumage : commander une lampe depuis un seul endroit. La phase L passe par l’interrupteur ; le conducteur commuté (retour lampe) alimente la lampe quand l’interrupteur est fermé ; le neutre N rejoint directement la lampe.\nÀ retenir : l’interrupteur doit normalement couper la phase, pas seulement le neutre. Le conducteur de protection doit être raccordé aux parties métalliques quand l’équipement l’exige. Boîtes et connexions adaptées et accessibles."], ["double allumage|interrupteur double|deux lampes commandees separement", "Double allumage : commander deux groupes de lampes séparément depuis le même emplacement (par exemple deux rangées d’éclairage). Une phase commune alimente le mécanisme ; deux sorties donnent deux retours lampe ; le neutre est commun aux lampes.\nErreur fréquente : confondre le double allumage avec le va-et-vient. Le double allumage sépare deux groupes ; le va-et-vient commande une même lampe depuis deux endroits."], ["fonctionnement du va et vient|principe du va et vient|navettes|lampe va et vient ne marche pas|diagnostic va et vient", "Va-et-vient : allumer ou éteindre une même lampe depuis deux endroits (par exemple en haut et en bas d’un escalier). Les deux commutateurs sont reliés par deux navettes. La phase arrive sur le commun du premier commutateur ; le commun du second alimente le retour lampe ; le neutre rejoint directement la lampe.\nDiagnostic de base (hors tension) : si la lampe ne s’allume jamais, vérifie l’alimentation, la lampe et les connexions. Si elle marche depuis un seul endroit ou dans certaines positions, fais contrôler les bornes communes et les navettes. Ne jamais intervenir sous tension."], ["prise de courant|mise a la terre|conducteur de protection|prise 230 v|a quoi sert la terre|prise de terre", "Une prise 230 V a trois conducteurs : L (phase) et N (neutre) alimentent l’appareil ; PE (terre) est le conducteur de protection qui offre un chemin en cas de défaut d’isolement sur une masse métallique. La terre ne remplace jamais le disjoncteur différentiel.\nÀ ne jamais faire : supprimer la terre, relier arbitrairement N et PE dans une prise, ou augmenter le calibre d’un disjoncteur sans vérifier tout le circuit. La protection différentielle et contre les surintensités doivent être adaptées au circuit, à la section des conducteurs et aux règles en vigueur."], ["demarrage direct d un moteur|demarrage direct du moteur|moteur triphasé demarrage direct|demarrage direct moteur triphase", "Démarrage direct : un contacteur KM connecte directement le moteur au réseau via une protection (QF ou Q1) et un relais thermique. Simple et économique, mais le courant de démarrage peut être élevé : à utiliser seulement si le réseau, la machine et les protections le permettent.\nLe circuit de commande (boutons Marche/Arrêt, bobine KM, contacts auxiliaires) est distinct du circuit de puissance. Avant de choisir le montage : lis la plaque moteur (tension, courant, fréquence, couplage, puissance), vérifie la tension du réseau, la coordination des protections et la capacité de coupure."], ["auto maintien|automaintien|commande marche arret|bouton marche arret contacteur|principe de l auto maintien", "Commande Marche/Arrêt avec auto-maintien : le bouton Arrêt est normalement fermé (NF), le bouton Marche normalement ouvert (NO). Une impulsion sur Marche alimente la bobine KM ; un contact auxiliaire NO de KM se ferme en parallèle du bouton Marche et maintient la bobine alimentée après relâchement. Appuyer sur Arrêt ouvre la commande et libère le contacteur.\nContrôles hors tension : repérage de la bobine (tension nominale correcte), état des boutons, continuité des conducteurs, contact auxiliaire et relais thermique. Ne jamais shunter un dispositif de protection pour faire fonctionner le moteur."], ["demarrage etoile triangle|etoile triangle|demarrage etoile triangle moteur|contacteur etoile et triangle", "Démarrage étoile-triangle : réduit le courant de démarrage d’un moteur compatible en démarrant en étoile puis en passant en triangle. Il faut un moteur prévu pour fonctionner en triangle à la tension du réseau, six bornes accessibles, trois contacteurs (principal KM1, étoile KM2, triangle KM3), un temporisateur et des verrouillages électriques et mécaniques.\nSéquence : 1) fermeture du principal et de l’étoile ; 2) après le délai réglé, ouverture de l’étoile ; 3) courte transition ; 4) fermeture du triangle. Étoile et triangle ne doivent jamais être fermés ensemble : court-circuit. Le schéma du guide est fonctionnel, pas un plan de câblage borne par borne : suis le schéma du constructeur."], ["transformateur monophase|fonctionnement d un transformateur|principe du transformateur|rapport de transformation|transformateur abaisseur|transformateur elevateur|role du transformateur", "Un transformateur transfère l’énergie d’un enroulement primaire vers un secondaire par induction magnétique ; le noyau guide le flux. Dans un transformateur idéal : U2/U1 ≈ N2/N1. Un abaisseur donne une tension secondaire plus faible ; un élévateur, plus élevée.\nSécurité : certains transformateurs délivrent des tensions dangereuses. Vérifie la plaque signalétique, l’isolement, les protections amont/aval et la mise à la terre. Ne jamais toucher les bornes pour « tester » la tension."], ["resistance et loi d ohm|loi d ohm|calcul de puissance d une resistance|p egale u fois i|puissance dissipee dans une resistance", "Une résistance limite le courant ou transforme l’énergie électrique en chaleur. Loi d’Ohm : U = R × I (U en V, R en Ω, I en A). Puissance : P = U × I = I²R = U²/R pour une résistance ohmique.\nExemple : R = 100 Ω sous 10 V → I = 10/100 = 0,1 A et P = 10 × 0,1 = 1 W. Choisis une puissance nominale avec une marge suffisante et respecte les conditions thermiques du fabricant."], ["moteur a courant continu|moteur cc|collecteur et balais|moteur courant continu", "Un moteur à courant continu comprend un stator (aimants ou enroulements), un rotor/induit, un collecteur et des balais (sur les modèles à balais). Le collecteur et les balais assurent la commutation du courant dans l’induit ; les moteurs sans balais utilisent une électronique de commande.\nDiagnostic élémentaire : vérifier l’alimentation nominale, l’état mécanique, les connexions, l’échauffement et l’usure des balais. Débranche l’alimentation avant toute inspection : un moteur peut démarrer brusquement."], ["appareillages de protection|difference disjoncteur differentiel|fonction du fusible|appareils de protection electrique|disjoncteur ou differentiel", "• Disjoncteur : protège le circuit contre certaines surintensités. Vigilance : calibre et courbe adaptés aux conducteurs et à la charge.\n• Interrupteur différentiel (DDR) : détecte un courant différentiel. Vigilance : type et sensibilité adaptés ; test périodique.\n• Fusible : ouvre le circuit si le courant dépasse ses caractéristiques. Remplace-le par le bon type et calibre, jamais par un fil.\n• Contacteur : commande une charge de puissance à distance. Vérifie la catégorie d’emploi et la tension de bobine.\n• Relais thermique : détecte certaines surcharges prolongées du moteur. Réglage selon le courant de la plaque ; ne remplace pas toute protection."], ["methode de diagnostic|diagnostic d une panne electrique|comment depanner|methode pour depanner|panne electrique methode", "Méthode simple en 5 étapes :\n1) Sécuriser : identifier la source, couper, empêcher la remise sous tension, vérifier l’absence de tension.\n2) Observer : odeur, échauffement, bruit, voyants, déclenchement.\n3) Lire le schéma : suivre l’alimentation jusqu’à la charge.\n4) Contrôler hors tension : connexions, continuité, état apparent.\n5) Corriger et tester, seulement si tu as les compétences, procédures et équipements.\nSymptômes : lampe éteinte → lampe, alimentation, interrupteur ou connexion ouverte. Disjoncteur qui déclenche → surcharge, court-circuit ou défaut d’isolement : cherche la cause, ne réarme pas en boucle. Contacteur qui ne colle pas → commande absente, arrêt ouvert, relais thermique déclenché, bobine défectueuse. Moteur qui chauffe → surcharge, ventilation obstruée, mauvais couplage/tension, défaut mécanique, alimentation déséquilibrée. Transformateur qui chauffe ou fait du bruit → surcharge, ventilation, tension incorrecte, défaut interne : mettre hors service."], ["glossaire electrique|que veut dire no et nf|contact no|contact nf|normalement ouvert|normalement ferme|c est quoi une navette|retour lampe", "• NO : normalement ouvert (ouvert au repos). • NF : normalement fermé (fermé au repos).\n• Bobine : crée un champ magnétique quand elle est alimentée.\n• Navettes : conducteurs entre les deux commutateurs d’un va-et-vient.\n• Retour lampe : conducteur commandé qui alimente la lampe quand le circuit est fermé.\n• Couplage étoile/triangle : manière de relier les enroulements d’un moteur triphasé.\n• Absence de tension : état à vérifier avec une procédure et un instrument adaptés, après consignation."], ["demarrage par resistances|resistances statoriques|resistances rotoriques|demarrage d un moteur par resistances", "Démarrage par résistances : des résistances sont insérées temporairement en série avec le moteur pour réduire la tension appliquée au démarrage, puis court-circuitées par des contacteurs. Cela provoque des pertes thermiques et exige des résistances dimensionnées pour le courant et la durée de démarrage.\nÀ distinguer : résistances statoriques (moteur asynchrone) ou rotoriques (moteur à rotor bobiné). Les schémas et les appareils ne sont pas interchangeables."], ["demarrage par autotransformateur|autotransformateur de demarrage|demarrage autotransformateur", "Démarrage par autotransformateur : il fournit une tension réduite au moteur pendant le démarrage ; une fois la vitesse suffisante, des contacteurs basculent le moteur sur sa tension normale. Convient à des moteurs de puissance importante, mais l’ensemble est plus volumineux et plus complexe qu’un démarrage direct.\nÀ vérifier : prises de tension disponibles, séquence de commutation, protections, courant et temps de démarrage, contraintes mécaniques de la charge."], ["demarreur progressif|soft starter|softstarter|demarrage progressif", "Démarreur progressif (soft starter) : l’électronique augmente progressivement la tension appliquée au moteur, ce qui limite les à-coups mécaniques et le courant de démarrage. En général, il ne règle pas la vitesse en continu comme un variateur.\nBonnes pratiques : choisir selon le courant nominal, la classe de service, le nombre de démarrages par heure, la ventilation, le bypass éventuel et la notice du fabricant ; prévoir les protections recommandées."], ["variateur de frequence|variateur de vitesse|variateur moteur|demarrage par variateur", "Variateur de fréquence : il transforme l’alimentation puis produit une tension et une fréquence variables pour contrôler la vitesse d’un moteur compatible, avec des rampes d’accélération et de décélération.\nÀ vérifier : compatibilité moteur/variateur, puissance et courant, type d’alimentation, réglages de plaque moteur, ventilation à basse vitesse, mise à la terre, câbles, filtres éventuels et consignes du fabricant. Les bornes de commande diffèrent selon les modèles."], ["comparaison des demarrages|methodes de demarrage d un moteur|methodes de demarrage d un moteur triphase|quelles sont les methodes de demarrage|types de demarrage d un moteur|methodes de demarrage des moteurs|quels sont les types de demarrage|differents demarrages de moteur|types de demarrage moteur", "Méthodes de démarrage d’un moteur :\n• Direct : simple, coût faible ; courant de démarrage élevé.\n• Étoile-triangle : réduit le courant ; moteur compatible et six bornes nécessaires.\n• Résistances : principe simple ; pertes thermiques, dimensionnement nécessaire.\n• Autotransformateur : tension de départ réduite ; équipement plus complexe et encombrant.\n• Soft starter : démarrage et arrêt progressifs ; ne règle généralement pas la vitesse.\n• Variateur : contrôle de vitesse et rampes ; réglage selon la notice constructeur."], ["securite avant mise en service|avant de mettre en service un moteur|verifications avant mise en service|consignation avant intervention", "Avant la mise en service :\n• Identifier la machine et lire sa plaque signalétique.\n• Couper, consigner et vérifier l’absence de tension avec un appareil adapté.\n• Vérifier la continuité du conducteur de protection et la coordination des protections.\n• Vérifier le serrage, les sections de conducteurs, le calibre des appareils et le schéma constructeur.\n• Tester les arrêts et les dispositifs de sécurité avant exploitation.\n• Ne jamais shunter un verrouillage, un relais thermique ou une protection pour forcer un démarrage."], ["five wire|5 wire|cinq fils|montage cinq fils|five wire cablage", "« Five-wire » (cinq fils) peut désigner plusieurs montages selon le contexte : circuit de commande, câblage de moteur, va-et-vient ou autre système. Ce n’est pas assez précis pour identifier un schéma unique. Dis-moi de quel circuit il s’agit et ce que tu veux faire, et je t’expliquerai le bon montage (sans te donner un plan de câblage réel avant validation avec la notice et un professionnel qualifié)."]].map(([k,v])=>[k.split("|").map(N),v]);
+GUIDEKB.forEach(e=>KB.push(e));
+/* ===== SCHÉMAS ÉLECTROTECHNIQUES (dessinés par le code) ===== */
+function G(){const K="currentColor";let s="";const o={
+ get s(){return s},
+ ln(p,c,d,w){s+='<polyline points="'+p+'" fill="none" stroke="'+(c||K)+'" stroke-width="'+(w||1.6)+'"'+(d?' stroke-dasharray="4 3"':'')+'/>';return o},
+ dot(x,y){s+='<circle cx="'+x+'" cy="'+y+'" r="2.4" fill="'+K+'"/>';return o},
+ rc(x,y,w,h,f,st,r){s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="'+(f||"none")+'" stroke="'+(st||K)+'" stroke-width="1.6"/>';return o},
+ ci(x,y,r,f){s+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+(f||"none")+'" stroke="'+K+'" stroke-width="1.6"/>';return o},
+ t(x,y,str,sz,a,b,c){s+='<text x="'+x+'" y="'+y+'" font-size="'+sz+'" text-anchor="'+(a||"middle")+'" fill="'+(c||K)+'"'+(b?' font-weight="bold"':'')+'>'+str+'</text>';return o},
+ fuse(x,y1,y2){return o.ln(x+","+(y1-6)+" "+x+","+(y2+6)).rc(x-3.5,y1,7,y2-y1,"#fff")},
+ no(x,ya,yb,nf,btn){o.ln(x+","+ya+" "+x+","+(ya+8)).ln(x+","+(yb-8)+" "+x+","+yb).ln((x-3)+","+(yb-8)+" "+(x+3)+","+(yb-8));
+  o.ln(x+","+(ya+8)+" "+(nf?x-3:x-8)+","+(yb-9));
+  if(nf)o.ln((x-6)+","+(ya+14)+" "+(x+2)+","+(ya+14)); // trait des contacts à ouverture (NF)
+  if(btn){const m=(ya+yb)/2;o.ln((x-4)+","+m+" "+(x-14)+","+m,null,1,1.2).ln((x-14)+","+(m-4)+" "+(x-14)+","+(m+4))}return o},
+ coil(x,y,lab){return o.rc(x-14,y,28,20,"#fff").t(x,y+14,lab,10,"middle",1).t(x+17,y+6,"A1",7,"start").t(x+17,y+19,"A2",7,"start")},
+ th(x,y1,y2){return o.rc(x-6,y1,12,y2-y1,"#fff").ln((x-4)+","+(y1+(y2-y1)*.7)+" "+(x-2)+","+(y1+4)+" "+(x+2)+","+(y2-4)+" "+(x+4)+","+(y1+(y2-y1)*.3),null,0,1.2)},
+ box(cx,cy,w,h,a){const c=Math.cos(a),n=Math.sin(a),P=[[-w/2,-h/2],[w/2,-h/2],[w/2,h/2],[-w/2,h/2],[-w/2,-h/2]].map(([x,y])=>(cx+x*c-y*n).toFixed(1)+","+(cy+x*n+y*c).toFixed(1)).join(" ");return o.ln(P)},
+ coilv(x,y,n,dir){let p=[];for(let i=0;i<n;i++)for(let k=0;k<=8;k++){const a=Math.PI*k/8;p.push((x+dir*6*Math.sin(a)).toFixed(1)+","+(y+i*12+6-6*Math.cos(a)).toFixed(1))}return o.ln(p.join(" "))}
+};return o}
+function svgWrap(g,h){return '<svg viewBox="0 0 360 '+h+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;height:auto;font-family:inherit">'+g.s+'</svg>'}
+
+/* Moteur triphasé : démarrage direct (inv=false) ou inversion de sens (inv=true) */
+function schMoteur(inv){const g=G(),X=[150,165,180],L=["L1","L2","L3"];
+ g.t(180,12,"Circuit de puissance",11,"middle",1);X.forEach((x,i)=>{g.t(x,26,L[i],10).ln(x+",30 "+x+",42").fuse(x,42,62).ln(x+",68 "+x+",80").no(x,80,110)});
+ g.ln("146,95 184,95",null,1).t(190,80,"Q1",10,"start",1).t(190,91,"sectionneur",8,"start").t(190,101,"porte-fusibles",8,"start");
+ let pend,yc;
+ if(!inv){X.forEach(x=>{g.ln(x+",110 "+x+",130").no(x,130,160).ln(x+",160 "+x+",182").th(x,182,204).ln(x+",204 "+x+",236")});
+  g.ln("146,145 184,145",null,1).t(190,142,"KM1",10,"start",1).t(190,196,"F2 thermique",8,"start");
+  g.ci(165,262,24).t(165,266,"M",12,"middle",1).t(165,280,"3~",10);pend=300;
+  [[150,243],[165,238],[180,243]].forEach(([x,y])=>g.ln(x+",236 "+x+","+y));}
+ else{
+  const B={L1:[116,60,270],L2:[124,75,255],L3:[132,90,240]};
+  // alimentation des buses depuis Q1 (jonctions seulement aux points de dérivation)
+  g.ln("150,110 150,116").dot(150,116).ln("165,110 165,124").dot(165,124).ln("180,110 180,132").dot(180,132);
+  g.ln("60,116 270,116").ln("75,124 255,124").ln("90,132 240,132");
+  const k1=[60,75,90],k2=[240,255,270],in1=[116,124,132],in2=[132,124,116];
+  k1.forEach((x,i)=>{g.ln(x+","+in1[i]+" "+x+",142").dot(x,in1[i]).no(x,142,172)});
+  k2.forEach((x,i)=>{g.ln(x+","+in2[i]+" "+x+",142").dot(x,in2[i]).no(x,142,172)});
+  g.ln("56,157 94,157",null,1).ln("236,157 274,157",null,1).t(100,150,"KM1",10,"start",1).t(278,150,"KM2",10,"start",1);
+  g.t(20,214,"sens 1",8,"start").t(300,214,"sens 2",8,"start");
+  const o1=[198,190,182],o2=[214,222,230];
+  k1.forEach((x,i)=>g.ln(x+",172 "+x+","+o1[i]+" "+X[i]+","+o1[i]+" "+X[i]+",246").dot(X[i],o1[i]));
+  k2.forEach((x,i)=>g.ln(x+",172 "+x+","+o2[i]+" "+X[i]+","+o2[i]).dot(X[i],o2[i]));
+  X.forEach(x=>g.th(x,246,268).ln(x+",268 "+x+",296"));g.t(192,262,"F2 thermique",8,"start");
+  g.ci(165,322,24).t(165,326,"M",12,"middle",1).t(165,340,"3~",10);
+  [[150,303],[165,298],[180,303]].forEach(([x,y])=>g.ln(x+",296 "+x+","+y));pend=360}
+ ["U1","V1","W1"].forEach((l,i)=>g.t(X[i]+(i?5:-4),(inv?292:232),l,8,i?"start":"end"));
+
+ yc=pend+16;const yN=yc+282,xa=100,xb=250;
+ g.t(180,yc-4,"Circuit de commande",11,"middle",1).t(40,yc+6,"L1",10).ln("40,"+(yc+10)+" 40,"+(yc+18)).fuse(40,yc+18,yc+38).t(52,yc+32,"F1",9,"start")
+  .ln("40,"+(yc+44)+" 40,"+(yc+50)).no(40,yc+50,yc+86,1).t(50,yc+72,"F2 95-96",8,"start")
+  .no(40,yc+96,yc+132,1,1).t(50,yc+118,"S0 arrêt",8,"start").ln("40,"+(yc+132)+" 40,"+(yc+144));
+ const br=(x,s1,km,nfk,coil,mk)=>{ // branche : marche S ∥ auto-maintien KM, verrouillage nfk, bobine
+  g.ln((x-15)+","+(yc+144)+" "+(x+15)+","+(yc+144)).dot(x-15,yc+144).dot(x+15,yc+144);
+  g.no(x-15,yc+152,yc+188,0,1).t(x-24,yc+190,s1,9,"end").no(x+15,yc+152,yc+188).t(x+23,yc+174,km,8,"start");
+  g.ln((x-15)+","+(yc+188)+" "+(x-15)+","+(yc+196)+" "+(x+15)+","+(yc+196)+" "+(x+15)+","+(yc+188)).dot(x,yc+196).ln(x+","+(yc+196)+" "+x+","+(yc+206));
+  if(nfk){g.no(x,yc+206,yc+242,1).t(x+10,yc+228,nfk,8,"start");g.ln(x+","+(yc+242)+" "+x+","+(yc+250))}else g.ln(x+","+(yc+206)+" "+x+","+(yc+250));
+  g.coil(x,yc+250,coil).ln(x+","+(yc+270)+" "+x+","+yN)};
+ g.ln("40,"+(yc+144)+" "+(inv?xb-15:xa-15)+","+(yc+144));
+ br(xa,"S1",inv?"KM1 13-14":"KM1 13-14",inv?"KM2 21-22":null,"KM1");
+ if(inv){br(xb,"S2","KM2 13-14","KM1 21-22","KM2");g.ln(xa+","+yN+" "+xb+","+yN)}
+ g.dot(xa,yN).t(xa+8,yN+12,"N",10,"start");
+ return {svg:svgWrap(g,yN+22)}}
+
+/* Transformateur : monophasé + couplage triphasé Dyn */
+function schTransfo(){const g=G();
+ g.t(180,14,"Transformateur monophasé",11,"middle",1);g.ln("0,0 0,0");
+ g.ln("168,44 168,144",null,0,2.4).ln("192,44 192,144",null,0,2.4);
+ g.coilv(160,54,7,-1).coilv(200,54,7,1);
+ g.ln("160,54 130,54 130,36").ln("160,138 130,138 130,156").ln("200,54 230,54 230,36").ln("200,138 230,138 230,156");
+ 
+ g.t(80,92,"Primaire",10,"middle",1).t(80,106,"tension U1",9).t(80,118,"N1 spires",9).t(80,130,"courant I1",9).t(280,92,"Secondaire",10,"middle",1).t(280,106,"tension U2",9).t(280,118,"N2 spires",9).t(280,130,"courant I2",9);
+ g.t(180,190,"m = U2 / U1 = N2 / N1 = I1 / I2",10,"middle",1).t(180,204,"(transformateur supposé parfait)",8);
+ g.t(180,230,"Couplage triphasé Dyn",11,"middle",1).t(180,243,"primaire triangle, secondaire étoile avec neutre",9);
+ // triangle primaire
+ const A=[85,262],Bv=[45,330],C=[125,330];
+ g.ln(A.join(",")+" "+Bv.join(",")+" "+C.join(",")+" "+A.join(","));
+ [[A,Bv],[Bv,C],[C,A]].forEach(([p,q])=>{const mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2,a=Math.atan2(q[1]-p[1],q[0]-p[0]);g.box(mx,my,18,8,a)});
+ g.ln("85,262 85,252").ln("45,330 35,342").ln("125,330 135,342").t(85,248,"A",9).t(32,354,"B",9).t(138,354,"C",9).t(85,374,"Primaire D (triangle)",9,"middle",1);
+ // étoile secondaire
+ const O=[270,315];[[270,262,"a"],[222,348,"b"],[318,348,"c"]].forEach(([x,y,l])=>{g.ln(O.join(",")+" "+x+","+y);g.box((O[0]+x)/2,(O[1]+y)/2,18,8,Math.atan2(y-O[1],x-O[0]));g.t(x+(l=="b"?-8:l=="c"?8:0),y+(l=="a"?-6:14),l,9)});
+ g.dot(270,315).ln("270,315 300,315").t(310,318,"n",9).t(270,374,"Secondaire yn (étoile + neutre)",9,"middle",1);
+ return {svg:svgWrap(g,388)}}
+
+/* Tableau électrique d'une maison : schéma unifilaire */
+function schTableau(){const g=G(),C=[["Éclairage","10 A","1,5 mm²"],["Prises","16 A","1,5 mm²"],["Prises","20 A","2,5 mm²"],["Chauffe-eau","20 A","2,5 mm²"],["Cuisinière","32 A","6 mm²"]];
+ g.t(180,13,"Réseau (compteur)",10,"middle",1).ln("180,17 180,38");
+ g.rc(158,38,44,24,"#fff").t(180,54,"D",12,"middle",1).t(208,48,"Disjoncteur de",8,"start").t(208,58,"branchement",8,"start").ln("180,62 180,82");
+ g.rc(158,82,44,24,"#fff").t(180,98,"ID",12,"middle",1).t(208,92,"Interrupteur diff.",8,"start").t(208,102,"30 mA",8,"start").ln("180,106 180,128");
+ g.ln("25,128 335,128",null,0,3).t(25,120,"Disjoncteurs divisionnaires :",8,"start");
+ C.forEach((c,i)=>{const x=45+i*67.5;g.ln(x+",128 "+x+",146").rc(x-9,146,18,28,"#fff").ln((x-5)+",152 "+(x+5)+",168").t(x,196,"",8).ln(x+",174 "+x+",206");
+  g.t(x,220,c[0],9,"middle",1).t(x,232,c[1],9).t(x,244,c[2],9)});
+ g.ln("25,268 335,268","#2e7d32",1,2).t(180,284,"Terre (PE) reliée à tous les circuits",9,"middle",0,"#2e7d32");
+ return {svg:svgWrap(g,296)}}
+
+function schemaElecFor(t){
+ if(/\btransformateurs?\b|\btransfo\b|\bdyn\b/.test(t)){const r=schTransfo();return {t:"Transformateur monophasé et couplage Dyn",svg:r.svg,cap:"Le primaire (N1 spires) transfère l’énergie au secondaire (N2 spires) par induction magnétique. Pour un transformateur parfait : U2 / U1 = N2 / N1 = I1 / I2. Il est abaisseur si U2 < U1 et élévateur si U2 > U1.\nCouplage Dyn : primaire en triangle (D), secondaire en étoile avec neutre (yn). L’indice horaire (par exemple 11) n’est pas représenté ici.\nVérifie la plaque signalétique avant toute utilisation."}}
+ if(/tableau (electrique|de la maison|de maison|divisionnaire|domestique|de distribution)|\bunifilaire\b/.test(t)){const r=schTableau();return {t:"Tableau électrique d’une maison (schéma unifilaire)",svg:r.svg,cap:"Disjoncteur de branchement, interrupteur différentiel 30 mA, puis un disjoncteur divisionnaire par circuit, avec la terre (PE) reliée à tous les circuits.\nValeurs usuelles inspirées de la norme française NF C 15-100 : éclairage 10 A / 1,5 mm², prises 16 A / 1,5 mm², prises 20 A / 2,5 mm², chauffe-eau 20 A / 2,5 mm², cuisinière 32 A / 6 mm². À adapter aux règles locales, à la puissance et à la longueur des circuits : fais valider par un professionnel qualifié."}}
+ if(/inversion|inverser|inverse|deux sens|marche avant|sens de rotation/.test(t)&&/moteur|contacteur|sens|rotation|triphase/.test(t)){const r=schMoteur(true);return {t:"Inversion du sens de rotation d’un moteur triphasé",svg:r.svg,cap:"KM1 = sens 1 ; KM2 = sens 2, avec deux phases croisées (L1 et L3). Commande : S1 et S2 avec auto-maintien, et verrouillage croisé par le contact NF de l’autre contacteur (KM2 21-22 dans la branche de KM1, KM1 21-22 dans celle de KM2).\nKM1 et KM2 ne doivent jamais être fermés ensemble : ce serait un court-circuit entre phases. Pour changer de sens, passe d’abord par S0 (arrêt).\nSchéma de principe : vérifie la plaque du moteur, les calibres et la notice du matériel. Coupe et consigne avant d’intervenir ; ne shunte jamais une protection."}}
+ if(/auto ?maintien|marche ?\/? ?arret|marche arret|demarrage direct|commande (d un |du |de )?moteur|circuit de commande/.test(t)){const r=schMoteur(false);return {t:"Démarrage direct d’un moteur triphasé, commande Marche/Arrêt",svg:r.svg,cap:"Puissance : Q1 (sectionneur porte-fusibles) → KM1 (contacteur) → F2 (relais thermique) → moteur. Commande : F1, contact F2 (95-96), S0 arrêt (NF), S1 marche (NO) avec le contact auxiliaire KM1 (13-14) en parallèle, bobine KM1.\nFonctionnement : une impulsion sur S1 alimente la bobine ; KM1 colle et son contact auxiliaire la maintient alimentée ; S0 ou le déclenchement de F2 ouvre la commande et libère KM1.\nSchéma de principe : vérifie la plaque du moteur, les calibres et la notice du matériel. Coupe et consigne avant d’intervenir ; ne shunte jamais une protection."}}
+ return null}
+
+/* ===== SCHÉMA SOLAIRE ILLUSTRÉ (dessiné par le code, ajustable) ===== */
+function schemaSolaire(t){
+ if(!/solaire|photovolta|panneaux?/.test(t))return null;
+ const mots={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6},m=t.match(/\b(\d+|un|une|deux|trois|quatre|cinq|six)\s+panneaux?/);
+ let n=m?(+m[1]||mots[m[1]]):3;const trop=n>6;n=Math.max(1,Math.min(6,n||3));
+ const ond=!/sans onduleur|courant continu seulement|uniquement en continu|sans 230/.test(t),R="#d32f2f",K="currentColor";let s="";
+ const ln=(p,c,d)=>{s+='<polyline points="'+p+'" fill="none" stroke="'+c+'" stroke-width="2"'+(d?' stroke-dasharray="4 3"':'')+'/>'};
+ const dot=(x,y,c)=>{s+='<circle cx="'+x+'" cy="'+y+'" r="2.6" fill="'+c+'"/>'};
+ const tx=(x,y,str,sz,a,c,b)=>{s+='<text x="'+x+'" y="'+y+'" font-size="'+sz+'" text-anchor="'+(a||"middle")+'" fill="'+(c||K)+'"'+(b?' font-weight="bold"':'')+'>'+str+'</text>'};
+ const pw=34,gp=6,tot=n*pw+(n-1)*gp,x0=150-tot/2,rx=[],kx=[];
+ tx(150,15,"Panneaux solaires ("+n+")",11);
+ for(let i=0;i<n;i++){const x=x0+i*(pw+gp),cx=x+pw/2;
+  s+='<rect x="'+x+'" y="26" width="'+pw+'" height="50" rx="2" fill="#1c2b4a" stroke="#7a8cb3"/>';
+  for(let j=1;j<3;j++)s+='<line x1="'+(x+j*pw/3)+'" y1="26" x2="'+(x+j*pw/3)+'" y2="76" stroke="#4c5f8a"/>';
+  for(let j=1;j<5;j++)s+='<line x1="'+x+'" y1="'+(26+j*10)+'" x2="'+(x+pw)+'" y2="'+(26+j*10)+'" stroke="#4c5f8a"/>';
+  ln((cx-7)+",76 "+(cx-7)+",96",R);ln((cx+7)+",76 "+(cx+7)+",108",K);dot(cx-7,96,R);dot(cx+7,108,K);rx.push(cx-7);kx.push(cx+7)}
+ ln(Math.min(...rx,170)+",96 "+Math.max(...rx,170)+",96",R);ln(Math.min(...kx,150)+",108 "+Math.max(...kx,150)+",108",K);
+ ln("170,96 170,150",R);ln("150,108 150,150",K);
+ s+='<rect x="120" y="150" width="120" height="70" rx="6" fill="#1f2a44" stroke="#8da0cc"/><rect x="150" y="160" width="60" height="22" rx="2" fill="#8fd3ff"/>';
+ tx(180,205,"MPPT",13,"middle","#fff",1);tx(112,180,"Contrôleur",10,"end");tx(112,192,"de charge MPPT",10,"end");
+ ln("240,168 296,168 296,153",R);ln("240,198 304,198 304,153",K);
+ s+='<circle cx="300" cy="132" r="14" fill="#ffe27a" stroke="#b58900"/><rect x="294" y="145" width="12" height="8" fill="#888"/>';tx(300,110,"Charge DC",10);
+ ln("170,220 170,248",R);s+='<rect x="164" y="248" width="12" height="18" fill="#fff" stroke="'+R+'"/>';ln("170,250 170,264",R);tx(182,254,"Fusible",10,"start");
+ ln("170,266 170,284 190,284 190,294",R);ln("150,220 150,288 130,288 130,294",K);
+ s+='<rect x="100" y="294" width="120" height="48" rx="4" fill="#37474f" stroke="#90a4ae"/><rect x="184" y="289" width="12" height="5" fill="'+R+'"/><rect x="124" y="289" width="12" height="5" fill="#222"/>';
+ tx(160,322,"BATTERIE",12,"middle","#fff",1);tx(190,308,"+",12,"middle","#fff",1);tx(130,308,"−",12,"middle","#fff",1);
+ if(ond){dot(190,284,R);ln("190,284 224,284",R);s+='<circle cx="234" cy="284" r="10" fill="'+R+'"/><line x1="228" y1="290" x2="240" y2="279" stroke="#fff" stroke-width="3"/>';
+  tx(234,262,"Interrupteur",8);tx(234,271,"batterie",8);ln("244,284 262,284",R);dot(130,288,K);ln("130,288 90,288 90,350 250,350 250,304 262,304",K);
+  s+='<rect x="262" y="266" width="78" height="50" rx="5" fill="#c62828" stroke="#7f0000"/>';tx(301,288,"Onduleur",11,"middle","#fff",1);tx(301,303,"12 V → 230 V",9,"middle","#fff");
+  ln("280,266 280,243",K,1);ln("322,266 322,243",K,1);s+='<rect x="262" y="205" width="78" height="38" rx="4" fill="#cfd8dc" stroke="#78909c"/>';tx(301,225,"Charge AC",10,"middle","#263238",1);tx(301,237,"230 V",9,"middle","#263238")}
+ ln("10,378 28,378",R);tx(33,382,"plus (+)",10,"start");ln("92,378 110,378",K);tx(115,382,"moins (−)",10,"start");
+ const cap="Schéma de principe : panneaux (en parallèle) → contrôleur MPPT → batterie (avec fusible)"+(ond?" → interrupteur → onduleur → charge AC. ":". ")+"La charge DC se branche directement sur le contrôleur. Rouge = plus, noir = moins."+(trop?" J’ai dessiné 6 panneaux au maximum.":"")+"\nLes câbles, fusibles et disjoncteurs se dimensionnent selon la puissance de l’installation. Coupe l’interrupteur avant d’intervenir : les panneaux restent sous tension en plein jour.";
+ return {t:"Installation solaire autonome",svg:'<svg viewBox="0 0 360 392" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;height:auto;font-family:inherit">'+s+'</svg>',cap:cap}}
+
+/* ===== MODULE COMMERCIAL (facultatif : seulement avec l'accord de l'utilisateur ou sur demande directe) ===== */
+const COM={whatsapp:"0192905062",email:"electrotechnique058@gmail.com",adresse:"Abomey, Bénin (adresse exacte à préciser)",zone:"Abomey, Bohicon et leurs environs",
+ s:{elec:"installations électriques",cablage:"câblage électrique et tableaux électriques",maint:"maintenance électrique et industrielle",solaire:"installations solaires",video:"installation de systèmes de vidéosurveillance",eclairage:"éclairage et solutions d’économie d’énergie"}};
+let comEtat=null,comBesoin="",comPropose=0;
+const COM_AIDE="Pour que le technicien puisse estimer ton besoin, précise :\n1) le type de travail (installation, panne, câblage, solaire, caméras) ;\n2) le lieu (ville, quartier) ;\n3) le type de bâtiment (maison, boutique, atelier, usine) ;\n4) ce qui existe déjà (compteur, tableau, appareils à alimenter) ;\n5) le délai souhaité ;\n6) si possible, des photos.\nEnvoie ensuite ces informations sur WhatsApp : "+COM.whatsapp+".";
+function comContact(){return "WhatsApp Messenger : "+COM.whatsapp+"\nE-mail : "+COM.email}
+function comServices(txt){const t=N(txt),L=[];
+ if(/solaire|panneau|onduleur|batterie/.test(t))L.push(COM.s.solaire);
+ if(/camera|surveillance|video/.test(t))L.push(COM.s.video);
+ if(/tableau|cablage|cabler/.test(t))L.push(COM.s.cablage);
+ if(/panne|maintenance|depann|repar/.test(t))L.push(COM.s.maint);
+ if(/eclairage|lampe|economie d energie/.test(t))L.push(COM.s.eclairage);
+ return L.length?L:[COM.s.elec,COM.s.cablage,COM.s.maint,COM.s.solaire,COM.s.video]}
+function comPresenter(b){return "Mon concepteur propose notamment : "+comServices(b).join(", ")+".\n\nZone d’intervention indiquée : "+COM.zone+". Pour une autre localité, c’est à confirmer avec lui.\nLe tarif dépend du travail à réaliser : je ne peux pas donner de prix fixe.\n\nPour décrire ton projet et obtenir une estimation :\n"+comContact()+"\n\nSouhaites-tu que je t’aide à préciser les travaux dont tu as besoin avant de le contacter ?"}
+function comRepondre(q){const t=N(q),W=t.split(" ").length;
+ if(comEtat){const e=comEtat,
+  oui=W<=6&&/^(oui|ouais|yes|d accord|dac|ok|okay|vas y|volontiers|je veux bien|bien sur|pourquoi pas|avec plaisir|s il te plait|svp)\b/.test(t),
+  non=W<=8&&/^(non|nan|pas besoin|pas maintenant|plus tard|ca ira|pas la peine|je ne veux pas|laisse tomber|pas interesse)\b/.test(t);
+  if(oui){comEtat=null;if(e==="offre"){comEtat="aide";return comPresenter(comBesoin)}return COM_AIDE}
+  if(non){comEtat=null;return e==="offre"?"D’accord, pas de problème ! On continue. 😊":"D’accord ! Je reste disponible si tu as d’autres questions."}
+  if(W<=4&&/^(peut etre|hum+|bof|euh+|mmm+|je ne sais pas|je sais pas|pas sur)/.test(t))return e==="offre"?"Je n’ai pas bien compris : veux-tu que je te présente les services de mon concepteur ? Réponds par oui ou par non.":"Je n’ai pas bien compris : veux-tu que je t’aide à préciser tes travaux ? Réponds par oui ou par non.";
+  comEtat=null}
+ // Questions précises sur le concepteur : on répond avec ce qui est enregistré, sans rien inventer
+ if(/\b(createur|concepteur|edison ahodede)\b/.test(t)){
+  if(/diplome|qualification|certif/.test(t))return "Mon concepteur a une formation en électrotechnique. Ses diplômes et qualifications précis restent à confirmer : je préfère ne pas les inventer.";
+  if(/reference|clients? satisfaits|avis de clients/.test(t))return "Aucune référence de client n’est fournie pour le moment, donc je ne peux en citer aucune.";
+  if(/travaux (deja )?(realises|faits|effectues)|realisations|a deja (fait|realise)/.test(t))return "Ses domaines de compétence sont : "+Object.values(COM.s).join(", ")+". Les travaux déjà réalisés restent à confirmer : je ne peux pas citer de chantiers précis.";
+  if(/garantie|garanti/.test(t))return "Aucune garantie particulière n’est confirmée, et je ne peux promettre aucun résultat. Pour les conditions d’une prestation, contacte-le sur WhatsApp : "+COM.whatsapp+".";
+  if(/disponib/.test(t))return "Sa disponibilité est à confirmer directement avec lui sur WhatsApp : "+COM.whatsapp+".";
+  if(/zone|intervient|se deplace|deplacement/.test(t))return "La zone d’intervention indiquée est : "+COM.zone+". Pour une autre localité, c’est à confirmer avec lui.";
+  if(/adresse|habite|travaille|atelier|bureau/.test(t))return "Adresse indiquée : "+COM.adresse+".";
+ }
+ const direct=/(coordonnees|contact|numero|whatsapp|e ?mail|mail|joindre|contacter|telephone).{0,40}(createur|concepteur|technicien|edison ahodede)|(createur|concepteur|technicien|edison ahodede).{0,40}(coordonnees|contact|numero|whatsapp|mail|joindre|telephone)|\b(tes|vos) services\b|services( professionnels)? de (ton|votre) (createur|concepteur)|(tarif|prix|devis|combien).{0,40}(createur|concepteur|tes services|ton travail)|\b(tes|ton|vos|votre) (tarifs?|prix|devis)\b/.test(t);
+ if(direct){if(/tarif|prix|devis|combien/.test(t))return "Le tarif dépend du type de travail à réaliser. Pour obtenir une estimation adaptée à ton besoin, tu peux prendre contact avec le technicien sur WhatsApp au "+COM.whatsapp+" et décrire ton projet.";
+  return "Voici les coordonnées professionnelles de mon concepteur :\n"+comContact()+"\nAdresse : "+COM.adresse+"\nZone d’intervention : "+COM.zone+"\n\nIl propose notamment : "+Object.values(COM.s).join(", ")+".\nLe tarif dépend du travail à réaliser."}
+ // L'utilisateur cherche un professionnel : on DEMANDE d'abord son accord (une seule fois par session)
+ const cherche=/\b(je cherche|je recherche|cherche|recherche|besoin d un|besoin d une|il me faut|trouver|recommande|connais tu|connaissez vous|qui peut|ou trouver|quelqu un pour)\b.{0,50}\b(electricien|technicien|installateur|professionnel)\b|\b(qui peut|quelqu un pour|ou trouver)\b.{0,40}\b(installer|cabler|depanner|reparer)\b.{0,40}(electri|solaire|camera|surveillance|panneau|tableau)/.test(t);
+ const savoir=/\b(comment|explique|c est quoi|difference|schema|calcul|dimensionn|pourquoi)\b/.test(t);
+ if(cherche&&!savoir&&!comPropose){comPropose=1;comEtat="offre";comBesoin=q;return "Je peux également te présenter les services professionnels de mon concepteur dans ce domaine. Souhaites-tu les découvrir ?"}
+ return null}
+
+/* ===== LYTEB : Lycée Technique et Professionnel de Bohicon ===== */
+const LYTEB={"ident": "Le Lycée Technique et Professionnel de Bohicon (LYTEB) est un établissement d'enseignement technique et professionnel situé dans la commune de Bohicon, département du Zou, au Bénin.\nSa mission : contribuer à la formation technique et professionnelle des jeunes, en leur permettant d'acquérir des connaissances théoriques et des compétences pratiques pour poursuivre leurs études ou entrer dans la vie professionnelle.\nJe peux aussi te parler de son histoire et de ses événements (2013, 2023, 2025, 2026). Attention : sa date de création n'a pas été confirmée.", "lieu": "Le Lycée Technique et Professionnel de Bohicon (LYTEB) est situé dans la commune de Bohicon, dans le département du Zou, au Bénin.", "role": "Le LYTEB participe à la formation technique et professionnelle des jeunes : sa vocation générale est de les aider à acquérir des compétences techniques et pratiques utiles pour poursuivre leurs études ou s'insérer dans l'emploi.\nLes objectifs généraux de l'enseignement technique et professionnel sont :\n• développer les compétences pratiques et techniques des apprenants ;\n• préparer les jeunes à différents métiers ;\n• favoriser la poursuite des études supérieures ;\n• contribuer à la disponibilité d'une main-d'œuvre qualifiée ;\n• participer au développement économique et industriel du Bénin.\nCes objectifs décrivent la vocation générale de ce type d'enseignement ; ce n'est pas une mesure chiffrée des résultats propres au LYTEB.", "creation": "La date exacte de création du LYTEB, l'année de son ouverture officielle, son fondateur et le nom de son premier directeur n'ont pas été confirmés dans les sources consultées. Je préfère ne pas les inventer.\nPour une réponse fiable, il faut consulter les archives du lycée, les anciens rapports de rentrée, les documents du ministère chargé de l'enseignement technique ou les textes officiels du Secrétariat général du Gouvernement.\nLes événements de 2013, 2023, 2025 et 2026 ne sont pas des dates de création.", "filiere": "Les filières et les diplômes proposés par le LYTEB peuvent changer d'une année à l'autre, et leurs dates d'ouverture n'ont pas été confirmées. Pour connaître l'offre d'une année scolaire précise, il faut consulter les documents officiels du lycée. Une information ancienne n'est pas forcément valable pour l'année en cours.", "2013": "En mars 2013, une visite ministérielle a eu lieu au Lycée Technique de Bohicon. La vétusté de certains équipements de travail a été évoquée, et des mesures pour améliorer les équipements des établissements techniques ont été annoncées.\nSource à consulter : une archive en ligne (gouvernement114.rssing.com). Il faut lire le document précis pour confirmer tous les détails.", "2023": "Le 31 mars 2023, le ministre chargé des Enseignements secondaire, technique et de la Formation professionnelle, Kouaro Yves Chabi, a visité le Lycée Technique de Bohicon. Cette visite s'inscrivait dans une tournée consacrée à l'enseignement et aux résultats scolaires dans le département du Zou.\nSource : site du ministère (enseignementsecondaire.gouv.bj, actualité n° 222).", "2025": "Le décret n° 2025-197 du 23 avril 2025 concerne les statuts-types des collèges et lycées publics au Bénin. C'est une évolution du cadre administratif des établissements publics d'enseignement.\nIl ne faut pas la confondre avec la date de création du LYTEB.", "2026": "Le décret n° 2026-071 du 4 mars 2026 est référencé comme portant approbation des statuts du Lycée Technique Professionnel de Bohicon. C'est une étape importante dans le cadre institutionnel de l'établissement.\nCela ne veut pas dire que le lycée a été créé en 2026 : sa date de création historique reste à confirmer.\nSource : sgg.gouv.bj (Secrétariat général du Gouvernement).", "decrets": "Le décret n° 2025-197 du 23 avril 2025 concerne les statuts-types des collèges et lycées publics au Bénin. C'est une évolution du cadre administratif des établissements publics d'enseignement.\nIl ne faut pas la confondre avec la date de création du LYTEB.\n\nLe décret n° 2026-071 du 4 mars 2026 est référencé comme portant approbation des statuts du Lycée Technique Professionnel de Bohicon. C'est une étape importante dans le cadre institutionnel de l'établissement.\nCela ne veut pas dire que le lycée a été créé en 2026 : sa date de création historique reste à confirmer.\nSource : sgg.gouv.bj (Secrétariat général du Gouvernement).", "histoire": "Histoire du LYTEB (ce qui est documenté) :\n• mars 2013 : visite ministérielle, vétusté de certains équipements évoquée ;\n• 31 mars 2023 : visite du ministre Kouaro Yves Chabi, dans le cadre d'une tournée dans le Zou ;\n• 23 avril 2025 : décret n° 2025-197 sur les statuts-types des lycées publics ;\n• 4 mars 2026 : décret n° 2026-071, référencé comme approuvant les statuts du LYTEB.\nSa date de création, son fondateur et son premier directeur n'ont pas été confirmés : je ne les invente pas. Demande-moi le détail d'une année si tu veux."};
+function lytebRepondre(q){const t=N(q);
+ if(!/\blyteb\b|lycee technique( et professionnel)?( de)? bohicon|lycee( de)? bohicon/.test(t))return null;
+ if(/2013/.test(t))return LYTEB["2013"];if(/2023|chabi/.test(t))return LYTEB["2023"];
+ if(/2025/.test(t))return LYTEB["2025"];if(/2026/.test(t))return LYTEB["2026"];
+ if(/vetuste|equipement/.test(t))return LYTEB["2013"];
+ if(/decret|statut|administrat|evolution|institution/.test(t))return LYTEB.decrets;
+ if(/cree|creation|fonde|fondateur|ouvert|ouverture|directeur|premier|premiere/.test(t))return LYTEB.creation;
+ if(/filiere|diplome|formation|serie/.test(t))return LYTEB.filiere;
+ if(/visite|ministre|evenement|histoire|passe|historique/.test(t))return LYTEB.histoire;
+ if(/ou se trouve|ou est|situe|localis|adresse|ville|departement|region/.test(t))return LYTEB.lieu;
+ if(/role|mission|vocation|importance|utilite|objectif|sert|forme/.test(t))return LYTEB.role;
+ return LYTEB.ident}
+
+/* ===== PHYSIQUE M1 : CINÉMATIQUE (source : pct_terminal.pdf) ===== */
+const PHKB=[
+["mecanique|la mecanique|qu est ce que la mecanique","La mécanique se divise en deux parties : la cinématique, qui décrit les mouvements des corps, et la dynamique, qui les prévoit quand toutes les forces appliquées sont connues. Galilée a établi la loi de la chute des corps (1602) et le principe d'inertie ; Newton a donné à la mécanique sa forme achevée en 1687 (Principia). Einstein l'a complétée en 1905 par la mécanique relativiste, pour les très grandes vitesses."],
+["cinematique|notions de cinematique|qu est ce que la cinematique","La cinématique décrit les mouvements sans chercher leurs causes : repérage d'un mobile (référentiel, repère, trajectoire), vecteur position, vitesse et accélération, puis les mouvements simples : rectiligne uniforme, rectiligne uniformément varié et circulaire uniforme. Demande-moi une de ces notions ou donne-moi un exercice avec ses données."],
+["referentiel|qu est ce qu un referentiel|difference referentiel repere","Un référentiel est le solide de référence par rapport auquel on décrit le mouvement. Un repère est le référentiel + une origine O + trois vecteurs unitaires (O, i, j, k). La trajectoire dépend du référentiel : la valve d'une roue de vélo décrit un cercle par rapport au vélo, mais une cycloïde par rapport au sol. Le mouvement est donc relatif."],
+["repere terrestre|repere geocentrique|repere heliocentrique|repere galactocentrique|reperes utilises","• Repère terrestre : lié à la Terre ; pour les mouvements de courte durée près de la surface (projectile, chute).\n• Repère géocentrique (de Coriolis) : centre de la Terre, axes vers 3 étoiles fixes ; pour les satellites et la Lune.\n• Repère héliocentrique (de Copernic) : centre du Soleil ; pour les planètes, comètes, sondes.\n• Repère galactocentrique : centre d'inertie de la Galaxie ; pour le mouvement du Soleil autour du noyau de la Voie Lactée."],
+["instant et duree|instant|duree d un phenomene|date d un evenement|origine des temps|unite de temps|la seconde","Un instant t (ou date) repère un événement par rapport à l'origine des temps (t = 0). Une durée est l'intervalle entre deux dates : Δt = t₂ − t₁. L'unité S.I. du temps est la seconde (s), définie à partir d'une transition électronique de l'atome de césium 133 (seconde atomique)."],
+["trajectoire|equation horaire|vecteur position|abscisse curviligne|coordonnees cartesiennes","La trajectoire est l'ensemble des positions successives du mobile. Son vecteur position est OM = x·i + y·j + z·k, et x = f(t), y = g(t), z = h(t) forment l'équation horaire. Sur une trajectoire connue, on peut aussi repérer le mobile par l'abscisse curviligne s = mes(AM), mesure algébrique de l'arc AM."],
+["vecteur vitesse|vitesse instantanee|vitesse moyenne|definition de la vitesse|qu est ce que la vitesse","• Vitesse moyenne : v_moy = M₁M₂ / (t₂ − t₁).\n• Vitesse instantanée : v = dOM/dt (dérivée du vecteur position par rapport au temps).\n• Le vecteur vitesse est tangent à la trajectoire, dans le sens du mouvement.\n• Coordonnées : vx = dx/dt, vy = dy/dt ; norme v = √(vx² + vy²).\n• Dans la base de Frenet : v = (ds/dt)·T, donc v = ds/dt. Unité : m/s."],
+["vecteur acceleration|acceleration instantanee|definition de l acceleration|qu est ce que l acceleration|base de frenet|acceleration normale|acceleration tangentielle","• Accélération : a = dv/dt = d²OM/dt² (dérivée de la vitesse).\n• Coordonnées : ax = dvx/dt = d²x/dt², ay = dvy/dt = d²y/dt² ; norme a = √(ax² + ay²).\n• Base de Frenet : a = aT·T + aN·N avec aT = dv/dt (tangentielle) et aN = v²/R (normale), R étant le rayon de courbure.\n• Le vecteur accélération est dirigé vers l'intérieur de la concavité de la trajectoire.\n• Cercle : R = rayon (constant) ; droite : R infini. Unité : m/s²."],
+["mouvement rectiligne uniforme|mru|rectiligne uniforme","Mouvement rectiligne uniforme : trajectoire droite et vitesse constante, donc accélération nulle (a = 0). v = constante et l'équation horaire est x = v·t + x₀, une fonction affine du temps (x₀ = abscisse à t = 0)."],
+["mouvement rectiligne uniformement varie|mruv|uniformement varie|uniformement accelere|uniformement retarde|mouvement accelere|mouvement retarde","Mouvement rectiligne uniformément varié : trajectoire droite et accélération constante.\n• v = a·t + v₀\n• x = ½·a·t² + v₀·t + x₀\n• v² − v₀² = 2a(x − x₀) (à connaître, très utile dans les exercices)\nSi a·v > 0, la vitesse augmente en valeur absolue : mouvement accéléré. Si a·v < 0, elle diminue : mouvement retardé (freinage)."],
+["mouvement circulaire uniforme|mcu|circulaire uniforme|acceleration centripete|vitesse angulaire|periode et frequence","Mouvement circulaire uniforme (rayon R, vitesse constante) :\n• s = R·θ (θ en rad) ; vitesse angulaire ω = dθ/dt (rad/s) ; θ = ω·t + θ₀\n• v = R·ω\n• accélération centripète (vers le centre) : a = v²/R = R·ω²\n• période T = 2π/ω (durée d'un tour, en s) ; fréquence N = 1/T = ω/2π (en Hz)."],
+["unites du systeme international|unites si|unites s i|grandeurs fondamentales|unite de la force|unite du travail|unite de la puissance|unite de l energie","Grandeurs fondamentales (S.I.) : longueur (mètre, m), temps (seconde, s), masse (kilogramme, kg), intensité (ampère, A), température (kelvin, K).\nMécanique : vitesse m/s ; vitesse angulaire rad/s ; accélération m/s² ; force N ; moment d'une force N·m ; travail et énergie J ; puissance W.\nÉlectromagnétisme : charge C ; tension V ; champ électrique V/m ; résistance Ω ; capacité F ; champ magnétique T ; flux Wb ; inductance H ; impédance Ω ; fréquence Hz.\nNucléaire : activité Bq ; dose absorbée Gy."],
+["que sais tu en physique|que sais tu de la physique|tu connais la physique|cours de physique","En physique, je connais pour l'instant le chapitre M1 (cinématique) : repères, trajectoire, vitesse, accélération, mouvements rectiligne uniforme, rectiligne uniformément varié et circulaire uniforme. Je sais aussi calculer : donne-moi un énoncé avec ses données (ex. « v0 = 5 m/s, a = 2 m/s², t = 4 s, calcule la vitesse »). D'autres chapitres seront ajoutés."]
+].map(([k,v])=>[k.split("|").map(N),v]);
+PHKB.forEach(e=>KB.push(e));
+
+const PHF=x=>{if(x===0)return "0";const a=Math.abs(x);let s=(a>=1e5||a<1e-3)?x.toExponential(2).replace(/e\+?(-?\d+)/,(m,e)=>" × 10^"+e):String(+x.toPrecision(4));return s.replace(".",",")};
+const PHU={a:"m/s²",v:"m/s",v0:"m/s",t:"s",d:"m",x:"m",x0:"m",R:"m",w:"rad/s",T:"s",N:"Hz"};
+const PHN={a:"a",v:"v",v0:"v₀",t:"t",d:"d",x:"x",x0:"x₀",R:"R",w:"ω",T:"T",N:"N"};
+const PHC={a:"a",v:"v",v0:"v",t:"time",T:"time",d:"len",x:"len",x0:"len",R:"len",w:"w",N:"N"};
+const PHSYM={x1:"x",x2:"x",v1:"v",v2:"v",t1:"t",t2:"t",a:"a",v:"v",v0:"v0",vo:"v0",v_0:"v0",t:"t",x:"x",x0:"x0",xo:"x0",x_0:"x0",r:"R",d:"d",n:"N",w:"w",omega:"w","ω":"w"};
+const PHQ=k=>{if(k.a===0)return k.d/k.v0;const D=k.v0*k.v0+2*k.a*k.d;if(D<0)return;const r=[(-k.v0+Math.sqrt(D))/k.a,(-k.v0-Math.sqrt(D))/k.a].filter(x=>x>=0).sort((p,q)=>p-q);return r[0]};
+const PHRU=[
+{e:"v = a·t + v₀",v:["v","a","t","v0"],s:{v:k=>k.a*k.t+k.v0,a:k=>(k.v-k.v0)/k.t,t:k=>(k.v-k.v0)/k.a,v0:k=>k.v-k.a*k.t}},
+{e:"v² − v₀² = 2·a·d",v:["v","v0","a","d"],s:{v:k=>Math.sqrt(k.v0*k.v0+2*k.a*k.d),v0:k=>Math.sqrt(k.v*k.v-2*k.a*k.d),a:k=>(k.v*k.v-k.v0*k.v0)/(2*k.d),d:k=>(k.v*k.v-k.v0*k.v0)/(2*k.a)}},
+{e:"d = (v + v₀)/2 · t",v:["d","v","v0","t"],s:{d:k=>(k.v+k.v0)/2*k.t,v:k=>2*k.d/k.t-k.v0,v0:k=>2*k.d/k.t-k.v,t:k=>2*k.d/(k.v+k.v0)}},
+{e:"d = ½·a·t² + v₀·t",v:["d","a","t","v0"],s:{d:k=>.5*k.a*k.t*k.t+k.v0*k.t,a:k=>2*(k.d-k.v0*k.t)/(k.t*k.t),v0:k=>(k.d-.5*k.a*k.t*k.t)/k.t,t:PHQ}}
+];
+const PHRC=[
+{e:"ω = 2π / T",v:["w","T"],s:{w:k=>2*Math.PI/k.T,T:k=>2*Math.PI/k.w}},
+{e:"N = 1 / T",v:["N","T"],s:{N:k=>1/k.T,T:k=>1/k.N}},
+{e:"ω = 2π·N",v:["w","N"],s:{w:k=>2*Math.PI*k.N,N:k=>k.w/(2*Math.PI)}},
+{e:"v = R·ω",v:["v","R","w"],s:{v:k=>k.R*k.w,R:k=>k.v/k.w,w:k=>k.v/k.R}},
+{e:"a = v² / R",v:["a","v","R"],s:{a:k=>k.v*k.v/k.R,v:k=>Math.sqrt(k.a*k.R),R:k=>k.v*k.v/k.a}},
+{e:"a = R·ω²",v:["a","R","w"],s:{a:k=>k.R*k.w*k.w,R:k=>k.a/(k.w*k.w),w:k=>Math.sqrt(k.a/k.R)}},
+{e:"d (arc) = v·t",v:["d","v","t"],s:{d:k=>k.v*k.t,v:k=>k.d/k.t,t:k=>k.d/k.v}}
+];
+function phRead(s){
+ const U="(m\\s*/\\s*s\\s*(?:\\^\\s*2|²|2)|m\\s*[·.]\\s*s\\s*(?:\\^?\\s*-\\s*2|⁻²)|m\\s*s\\s*-\\s*2|km\\s*/\\s*h|m\\s*/\\s*s|m\\s*[·.]\\s*s\\s*(?:\\^?\\s*-\\s*1|⁻¹)|rad\\s*/\\s*s|tr\\s*/\\s*min|tours?\\s*/\\s*min|tr\\s*/\\s*s|hz|km|cm|mm|min|metres?|m|heures?|h|secondes?|s)(?![a-z])";
+ const re=new RegExp("(?<![a-zω_\\d.])(-?\\d+(?:\\.\\d+)?)\\s*(?:"+U+")?","g"),K={};let m,prev=0;
+ while((m=re.exec(s))){const end=m.index+m[0].length,lab=s.slice(Math.max(prev,m.index-34),m.index);prev=end;
+  const ul=(m[2]||"").replace(/\s+/g,"");let val=+m[1],kind=null,key=null;
+  if(/^m\/s(\^2|²|2)$|^m[·.]s(\^?-2|⁻²)$|^ms-2$/.test(ul))kind="a";
+  else if(ul==="km/h"){kind="v";val/=3.6}
+  else if(/^m\/s$|^m[·.]s(\^?-1|⁻¹)$/.test(ul))kind="v";
+  else if(ul==="rad/s")kind="w";
+  else if(/^(tr|tours?)\/min$/.test(ul)){kind="w";val*=2*Math.PI/60}
+  else if(ul==="tr/s"){kind="w";val*=2*Math.PI}
+  else if(ul==="hz")kind="N";
+  else if(/^(km|cm|mm|m|metres?)$/.test(ul)){kind="len";val*=ul==="km"?1000:ul==="cm"?.01:ul==="mm"?.001:1}
+  else if(/^(min|h|heures?|s|secondes?)$/.test(ul)){kind="time";val*=ul==="min"?60:/^h/.test(ul)?3600:1}
+  const sm=lab.match(/([a-zω]+(?:_?\d)?)\s*=\s*\+?\s*$/),sym=sm?PHSYM[sm[1]]:null;const sbx=lab.match(/([a-zω]+_[a-zω]+)\s*=\s*\+?\s*$/);if(sbx&&!PHSYM[sbx[1]])continue;
+  if(sym&&(!kind||PHC[sym]===kind))key=sym;
+  else if(kind==="a"){key="a";if(/deceler|freinage|ralenti|retard/.test(lab))val=-Math.abs(val)}
+  else if(kind==="v")key=/final|atteint|au bout/.test(lab)?"v":/initial|\bv0\b|v_0|\bvo\b|depart|roule|lance|part avec|anime/.test(lab)?"v0":"v";
+  else if(kind==="w")key="w";else if(kind==="N")key="N";
+  else if(kind==="len")key=/rayon/.test(lab)?"R":/initial|\bx0\b|x_0|origine/.test(lab)?"x0":/abscisse|position/.test(lab)?"x":"d";
+  else if(kind==="time"){if(/\bt0\b|t_0/.test(lab))continue;key=/periode/.test(lab)?"T":"t"}
+  if(key&&K[key]===undefined)K[key]=val}
+ return K}
+function phTarget(s,K){
+ const w=s.replace(/vitesse angulaire|pulsation|omega|ω/g,"zzomegazz"),vi=w.search(/\b(?:calcul\w*|determine[rz]?|trouve[rz]?|donne[rz]?|quel(?:le)?s?|combien|exprime[rz]?)\b/);if(vi<0&&!/\?/.test(w))return null;const seg=vi>=0?w.slice(vi):w;
+ const C=[["w",/zzomegazz/],["a",/acceleration|decelera/],["v",/vitesse(?! initiale| de depart)/],["t",/duree|combien de temps|temps|date|instant/],["d",/distance|parcour|deplacement|longueur/],["x",/abscisse|position/],["R",/rayon/],["T",/periode/],["N",/frequence|nombre de tours/]];
+ const c=C.filter(([k,r])=>K[k]===undefined&&r.test(seg)).map(([k,r])=>[k,seg.search(r)]).sort((p,q)=>p[1]-q[1]);return c.length?c[0][0]:null}
+function phPoly(str){const s=str.replace(/\s+/g,"").replace(/²/g,"^2").replace(/[*×]/g,"").replace(/,/g,".").replace(/−/g,"-"),c=[0,0,0],re=/([+-]?)(\d*\.?\d*)(t(\^2)?)?/g;let m,ok=false;
+ while((m=re.exec(s))){if(m[0]===""){re.lastIndex++;continue}if(m[2]===""&&!m[3])continue;const v=m[2]===""?1:+m[2];c[m[3]?(m[4]?2:1):0]+=(m[1]==="-"?-1:1)*v;ok=true}return ok?c:null}
+const phS=c=>{let r="";[[2,"·t²"],[1,"·t"],[0,""]].forEach(([d,u])=>{const v=c[d];if(!v)return;r+=(r?(v<0?" − ":" + "):(v<0?"−":""))+PHF(Math.abs(v))+u});return r||"0"};
+const phEv=(c,t)=>c[2]*t*t+c[1]*t+c[0];
+function phRoots(c){const[c0,c1,c2]=c;if(Math.abs(c2)<1e-12)return Math.abs(c1)<1e-12?[]:[-c0/c1];const D=c1*c1-4*c2*c0;if(D<0)return[];return[(-c1+Math.sqrt(D))/(2*c2),(-c1-Math.sqrt(D))/(2*c2)]}
+function physSolve(q){
+ let s=q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[−–]/g,"-").replace(/['’]/g," ").replace(/,/g,".").replace(/\s+/g," ");
+ s=s.replace(/\\text\{\s*([^}]*)\}/g," $1 ").replace(/\\cdot/g,"·").replace(/\^\{\s*(-?\d+)\s*\}/g,"^$1").replace(/\\[a-z]+/g," ").replace(/([a-z])_\{?(\d)\}?/g,"$1$2").replace(/\s+/g," ");
+ // 1) rencontre de deux mobiles : x1 = ... et x2 = ...
+ if(/rencontre/.test(s)&&(s.match(/=/g)||[]).length>=2){const p=s.replace(/^.*?rencontre[^x]*/,"").split(/\s+et\s+|;/).map(z=>z.split("=").pop()).map(phPoly);
+  if(p.length>=2&&p[0]&&p[1]){const d=[p[0][0]-p[1][0],p[0][1]-p[1][1],p[0][2]-p[1][2]],r=phRoots(d).filter(t=>t>=0).sort((a,b)=>a-b);
+   if(!r.length)return "Les deux mobiles ne se rencontrent pas (l'équation x₁(t) = x₂(t) n'a pas de solution positive).";
+   return "Rencontre : on écrit x₁(t) = x₂(t), soit "+phS(d)+" = 0.\nSolution(s) positive(s) : "+r.map(t=>"t = "+PHF(t)+" s (x = "+PHF(phEv(p[0],t))+" m)").join(" ; ")+".\nSi plusieurs solutions existent, garde celle qui est dans l'intervalle de temps de l'énoncé."}}
+ // 2) x = A cos ωt ; y = A sin ωt
+ if(/cos\s*\(?\s*(ω|omega|w)\s*\*?\s*t/.test(s)&&/sin/.test(s)){const A=s.match(/\ba\s*=\s*(\d+\.?\d*)\s*(cm|mm|m)\b/),W=s.match(/(?:ω|omega|\bw)\s*=\s*(\d+\.?\d*)/);
+  if(A&&W){const a=+A[1]*(A[2]==="cm"?.01:A[2]==="mm"?.001:1),w=+W[1];return "x = A·cos ωt et y = A·sin ωt donnent x² + y² = A² : la trajectoire est un cercle de rayon A = "+PHF(a)+" m (mouvement circulaire uniforme).\nVitesse : vx = −Aω·sin ωt, vy = Aω·cos ωt, donc v = Aω = "+PHF(a*w)+" m/s (constante).\nAccélération : a = Aω² = "+PHF(a*w*w)+" m/s² (constante), vecteur dirigé vers le centre (centripète)."}}
+ // 3) équation horaire polynomiale : vitesse / accélération par dérivation
+ const ix=s.search(/\bx\s*(?:\(t\))?\s*=/);
+ if(ix>=0&&/vitesse|acceleration|deriv/.test(s)){const body=s.slice(ix).replace(/^x\s*(?:\(t\))?\s*=\s*/,"").match(/^[0-9.+\-*×t^²\s]+/);const c=body&&phPoly(body[0]);
+  if(c&&(c[1]||c[2])){const tv=s.match(/(?:t|date|instant)\s*=\s*(-?\d+\.?\d*)/),dc=[c[1],2*c[2],0];
+   let r="Équation horaire : x(t) = "+phS(c)+".\nVitesse (dérivée) : v(t) = dx/dt = "+phS([c[1],2*c[2],0])+".\nAccélération (dérivée seconde) : a = d²x/dt² = "+PHF(2*c[2])+" (constante).";
+   if(tv){const t=+tv[1];r+="\nÀ t = "+PHF(t)+" s : x = "+PHF(phEv(c,t))+" m ; v = "+PHF(phEv(dc,t))+" m/s ; a = "+PHF(2*c[2])+" m/s²."}return r}}
+ if(((s.match(/\b\d\s*°|(?<![(\w])[a-d]\)/g)||[]).length>=2)||/deuxieme mobile|second mobile|mobile m ?'|autre mobile/.test(s))return "Cet exercice contient plusieurs questions et plusieurs mobiles : si je le traite d'un seul bloc, je risque de mélanger les données et de me tromper.\nEnvoie-le question par question, en rappelant les données utiles. Exemple : « Un mobile part de x0 = -0,5 m avec v0 = -1 m/s et passe au point x1 = 5 m avec v1 = 4,7 m/s. Calcule l'accélération. »\nPour une rencontre, donne les deux équations : « rencontre x1 = 0,96t² - t - 0,5 et x2 = 4t - 3 »."
+ // 4) résolution générale par relations (MRU, MRUV, MCU)
+ if(s.length>600||/machine|alternateur|moteur|synchrone|rotor|inducteur|transformateur|bobine|\bpoles?\b/.test(s))return null;const K=phRead(s);if(!Object.keys(K).length)return null;const tg=phTarget(s,K);if(!tg)return null;
+ const circ=/circulaire|cercle|rayon|\btours?\b|periode|centripete|angulaire|pulsation/.test(s)||["w","R","T","N"].some(k=>K[k]!==undefined)||["w","R","T","N"].includes(tg);
+ const mode=circ?"C":(K.a!==undefined||tg==="a"||/uniformement|acceleration|freine|decelera|demarre/.test(s))?"U":"R",note=[],K0={...K};
+ if(!circ){if(mode==="R"){K.a=0;if(K.v!==undefined&&K.v0===undefined)K.v0=K.v}
+  if(/part (du|de l) ?(repos|arret)|partant du repos|sans vitesse initiale|depart arrete|au repos|demarre/.test(s)&&K.v0===undefined)K.v0=0;
+  if(/s arrete|jusqu a l arret|s immobilise|arret complet/.test(s)&&K.v===undefined&&tg!=="v")K.v=0;
+  if(K.x!==undefined&&K.x0!==undefined&&K.d===undefined)K.d=K.x-K.x0}
+ const rels=circ?PHRC:PHRU,steps=[];let assumed=false;const goal=tg==="x"?"d":tg;
+ for(let it=0;it<12&&K[goal]===undefined;it++){let prog=false;
+  for(const r of rels){const un=r.v.filter(z=>K[z]===undefined);if(un.length!==1)continue;const val=r.s[un[0]](K);if(val===undefined||!isFinite(val))continue;K[un[0]]=val;steps.push([r.e,un[0],val,r.v.filter(z=>z!==un[0])]);prog=true;if(K[goal]!==undefined)break}
+  if(!prog){if(!circ&&K.v0===undefined&&!assumed&&/lance|part|demarre|depart|repos|catapult|lache|chute/.test(s)){K.v0=0;assumed=true;note.push("J'ai supposé un départ du repos (v₀ = 0). Dis-moi si ce n'est pas le cas.");continue}break}}
+ if(K[goal]===undefined){if(Object.keys(K0).length<2)return null;return "Je n'ai pas assez de données pour calculer "+PHN[tg]+".\nDonnées lues : "+Object.keys(K0).map(k=>PHN[k]+" = "+PHF(K0[k])+" "+PHU[k]).join(" ; ")+".\nPrécise par exemple l'accélération, la vitesse initiale, la durée ou la distance."}
+ let fin=K[goal];if(tg==="x"){const x0=K.x0===undefined?0:K.x0;if(K.x0===undefined)note.push("J'ai pris l'origine x₀ = 0.");fin=x0+K.d;steps.push(["x = x₀ + d","x",fin,["x0","d"]])}
+ const names={C:"circulaire uniforme",U:"rectiligne uniformément varié (a constante)",R:"rectiligne uniforme (a = 0)"};
+ let out="Données : "+Object.keys(K0).map(k=>PHN[k]+" = "+PHF(K0[k])+" "+PHU[k]).join(" ; ")+"\nMouvement : "+names[mode]+".";
+ for(const [e,u,v,o] of steps){const sub=o.filter(z=>K[z]!==undefined).map(z=>PHN[z]+" = "+PHF(K[z])).join(" ; ");out+="\n• "+e+" → "+PHN[u]+" = "+PHF(v)+" "+PHU[u]+(sub?" (avec "+sub+")":"")}
+ out+="\nRéponse : "+PHN[tg]+" = "+PHF(fin)+" "+PHU[tg]+".";
+ if(note.length)out+="\n"+note.join(" ");
+ return out+"\nVérifie toujours les unités (S.I.)."}
+
+const KEY=["", ""];
+function kb(t){let b=0,r=null;for(const [ks,v] of KB)for(const k of ks)if(has(t,k)&&k.length>b){b=k.length;r=v}return r}
+const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],JOURS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+const SESSION_ID=(()=>{try{return localStorage.getItem("edison_session")||""}catch(e){return ""}})();
+let STORE_KEY="edison_ia_memory_v2"+(SESSION_ID?":u:"+SESSION_ID:"");
+function emptyStore(){return {version:2,history:[],personal:[],knowledge:[],updatedAt:null}}
+function loadStore(){try{const x=JSON.parse(localStorage.getItem(STORE_KEY)||"null");if(x&&typeof x==="object")return {...emptyStore(),...x,history:Array.isArray(x.history)?x.history:[],personal:Array.isArray(x.personal)?x.personal:[],knowledge:Array.isArray(x.knowledge)?x.knowledge:[]}}catch(e){}return emptyStore()}
+let store=loadStore();
+function saveStore(){try{store.updatedAt=new Date().toISOString();localStorage.setItem(STORE_KEY,JSON.stringify(store));return true}catch(e){return false}}
+function remember(category,text){const arr=store[category],value=text.trim();if(!Array.isArray(arr)||!value)return false;if(arr.some(x=>N(typeof x==="string"?x:x.text)===N(value)))return true;arr.push({text:value,createdAt:new Date().toISOString()});if(arr.length>200)arr.shift();saveStore();return true}
+function addHistory(role,content){store.history.push({role,content,at:new Date().toISOString()});if(store.history.length>100)store.history=store.history.slice(-100);saveStore()}
+function renderMemory(){const el=$("memoryView");if(!el)return;const a=store.personal.map(x=>"• "+(x.text||x)),b=store.knowledge.map(x=>"• "+(x.text||x));el.textContent="Historique : "+store.history.length+" messages\n\nMémoire personnelle ("+a.length+") :\n"+(a.join("\n")||"• Rien pour le moment")+"\n\nConnaissances ajoutées ("+b.length+") :\n"+(b.join("\n")||"• Rien pour le moment")}
+function memoryContext(){return [...store.personal.map(x=>"Information personnelle : "+(x.text||x)),...store.knowledge.map(x=>"Connaissance mémorisée : "+(x.text||x))].join("\n")}
+function calc(q){let s=q.toLowerCase().replace(/combien (font|fait)|calcule|[=?]/g,"").replace(/fois|×|\bx\b/g,"*").replace(/divisé par|÷/g,"/").replace(/\bplus\b/g,"+").replace(/\bmoins\b/g,"-").replace(/,/g,".");if(/^[\d\s+\-*/().]+$/.test(s)&&/\d\s*[-+*/]\s*\d/.test(s)){try{const v=Function('"use strict";return ('+s+')')();if(isFinite(v))return "Le résultat est "+String(+v.toFixed(6)).replace(".",",")+"."}catch(e){}}return null}
+function developper(q,base){const t=N(q);if(/loi d ohm|ohm/.test(t))return "Bien sûr, voici une explication de la loi d’Ohm.\n\nElle relie la tension U, la résistance R et le courant I : U = R × I.\n• Courant : I = U / R.\n• Résistance : R = U / I.\n• Tension : U = R × I.\n\nExemple : sous 230 V, une résistance de 46 Ω laisse passer I = 230 / 46 = 5 A.\n\nÀ retenir : les unités doivent être cohérentes. Avant une mesure de résistance, coupe l’alimentation et vérifie l’absence de tension.";if(/moteur/.test(t))return "Un moteur électrique transforme l’énergie électrique en énergie mécanique. Dans un moteur asynchrone triphasé, les trois phases créent dans le stator un champ magnétique tournant. Celui-ci induit des courants dans le rotor, qui produisent le couple de rotation.\n\nExemple : dans une usine, l’arbre du moteur peut entraîner une pompe, un ventilateur ou un convoyeur. Les protections doivent être choisies selon la plaque signalétique et les règles de sécurité.";if(/transformateur/.test(t))return "Un transformateur fonctionne par induction électromagnétique. Le courant alternatif du primaire crée un flux magnétique variable dans le noyau, qui induit une tension au secondaire. Le rapport des tensions est approximativement égal au rapport du nombre de spires : U₂/U₁ = N₂/N₁. Il peut abaisser ou élever une tension alternative.";return "Voici une explication plus détaillée.\n\n"+base+"\n\nL’idée essentielle est de comprendre le principe, puis de le relier à un exemple concret. Tu peux me demander ensuite une application pratique ou une explication étape par étape."}
+function rememberedKnowledge(q){const words=N(q).split(" ").filter(w=>w.length>3&&!/^(avec|dans|pour|quoi|comment|quand|quel|quelle|quels|quelles|estce|cette|cela|faire|donne|moi|explique|savoir|connais)$/.test(w));for(const item of store.knowledge){const note=item.text||item,nt=N(note),hits=words.filter(w=>nt.includes(w));if(hits.length>=2)return "D’après une connaissance que tu m’as apprise :\n"+note}return null}
+function local(q){const t=N(q),d=new Date();
+const R=a=>a[Math.floor(Math.random()*a.length)],W=t.split(" ").length;
+if(W<=5&&/\bmerci\b/.test(t))return R(["Pas de quoi ! 😊","Avec plaisir ! ⚡","De rien, c’est normal ! 🤝"]);
+if(W<=4&&/^(ok|okay|d accord|dac|entendu|bien recu|compris|c est bon|cool|parfait|nickel|top)\b/.test(t))return R(["D’accord ! 👍","Entendu ! ✅","Très bien ! 😊"]);
+if(W<=6&&/\b(blague|humour|drole)\b|fais moi rire/.test(t))return R(["Pourquoi les électriciens sont-ils toujours calmes ? Parce qu’ils ont de la résistance ! 😄", "Quel est le comble pour un électricien ? De ne pas être au courant ! ⚡😂", "Que dit un fil à un autre fil ? Ne me lâche pas, restons en contact ! 🔌😆"]);
+if(/president.*(benin|republique)|((benin|republique).*president)|qui est le president/.test(t))return "À la date de ma dernière mise à jour (octobre 2026), le président de la République du Bénin est Romuald Wadagni, investi le 24 mai 2026. Cette information peut changer ; vérifie le site officiel presidence.bj pour les mises à jour.";
+if(/\b(benin|republique du benin)\b/.test(t)&&!/histoire|independance|culture|vodun|dahomey|electricite|energie|sbee|ouidah/.test(t))return "Oui, je connais le Bénin ! C’est un pays d’Afrique de l’Ouest, sur le golfe de Guinée. Sa capitale officielle est Porto-Novo ; Cotonou est sa principale ville économique et accueille le siège du gouvernement. Sa langue officielle est le français. Il partage des frontières avec le Togo, le Nigeria, le Burkina Faso et le Niger.";
+if(has(t,"qui es tu","qui est tu","tu es qui","presente toi","comment tu t appelles","quel est ton nom","ton nom","tu es quoi"))return "Je suis Novi IA, un assistant virtuel francophone conçu pour discuter, expliquer des notions, aider à résoudre des problèmes et effectuer certains calculs. Je suis notamment spécialisé en électrotechnique et en sciences. J’ai été conçu par mon créateur, un électrotechnicien.";
+if(has(t,"createur","qui t a cree","qui t a fait","qui t a developpe","qui t a programme","qui t a concu","qui est ton createur","nom de ton createur"))return "Mon créateur est Edison Ahodede, électrotechnicien. Il m’a conçu pour aider à apprendre, discuter, calculer et résoudre des problèmes.";
+if(/^(bonjour|salut|coucou|hello|salam|bonsoir|bonne soiree)\b/.test(t))return (t.startsWith("bonsoir")||t.startsWith("bonne soiree")?"Bonsoir !":"Bonjour !")+" Comment vas-tu aujourd’hui ? 👋";
+if(/^(comment ca va|comment vas tu|comment tu vas|tu vas bien|comment allez vous)\b/.test(t))return "Ça va bien, merci ! Et toi, comment vas-tu ?";
+if(/^(et toi|et toi ca va|toi aussi|et vous)\b/.test(t))return "Ça va bien, merci ! Je suis prêt à discuter avec toi. Quoi de neuf de ton côté ?";
+if(/\b(triste|pas bien|ca ne va pas|je vais mal|je suis fatigue|je suis fatiguee)\b/.test(t))return "Je suis désolé que tu te sentes comme ça. Si tu veux, raconte-moi ce qui se passe ; je vais t’écouter et essayer de t’aider.";
+if(/^(tu fais quoi|qu est ce que tu fais|que fais tu|tu fais quoi maintenant)\b/.test(t))return "Je suis là pour discuter avec toi, répondre à tes questions, expliquer des sujets, t’aider à apprendre et effectuer certains calculs. Qu’aimerais-tu faire ?";
+if(/^(que sais tu faire|tu peux faire quoi|que peux tu faire|a quoi tu sers|a quoi sers tu|quelles sont tes capacites)\b/.test(t))return "Je peux discuter, expliquer des notions, donner des exemples, effectuer certains calculs et chercher des informations en ligne si la connexion fonctionne. Je peux aussi retenir des informations dans ce navigateur. Je peux toutefois me tromper et dois reconnaître mes limites.";
+if(/^(tu es un robot|es tu une ia|tu es une intelligence artificielle|tu es humain|est ce que tu es humain)\b/.test(t))return "Je suis un assistant logiciel d’intelligence artificielle, pas un être humain. Je peux converser et aider sur certaines tâches, mais je n’ai ni corps ni expériences personnelles.";
+if(/^(retiens que|souviens toi que|memorise que|garde en memoire que|n oublie pas que)\b/.test(t)){const value=q.replace(/^(retiens que|souviens[- ]toi que|mémorise que|memorise que|garde en mémoire que|garde en memoire que|n’oublie pas que|n oublie pas que)\s*/i,"").trim();if(value){remember("personal",value);return "D’accord, j’ai enregistré dans la mémoire personnelle de ce navigateur : « "+value+" ». Tu peux voir ou effacer la mémoire dans le panneau 🧠."}return "Quelle information veux-tu que je retienne ?"}
+if(/^(apprends que|ajoute a tes connaissances que|memorise comme connaissance que)\b/.test(t)){const value=q.replace(/^(apprends que|ajoute à tes connaissances que|ajoute a tes connaissances que|mémorise comme connaissance que|memorise comme connaissance que)\s*/i,"").trim();if(value){remember("knowledge",value);return "J’ai ajouté cette information à ma mémoire de connaissances dans ce navigateur : « "+value+" »."}return "Quelle connaissance veux-tu m’apprendre ?"}
+if(/^(qu as tu memorise|qu est ce que tu as memorise|que sais tu sur moi|qu as tu retenu|montre ma memoire|affiche la memoire)\b/.test(t)){const a=[...store.personal.map(x=>x.text||x),...store.knowledge.map(x=>x.text||x)];return a.length?"Voici ce que j’ai mémorisé :\n• "+a.join("\n• "):"Je n’ai encore rien mémorisé. Tu peux dire : « Retiens que je préfère les explications avec des exemples. »"}
+if(/^(oublie tout|efface toute ta memoire|supprime toute la memoire|oublie ce que tu sais sur moi)\b/.test(t)){store.personal=[];store.knowledge=[];store.history=[];saveStore();return "J’ai effacé la mémoire personnelle, les connaissances ajoutées et l’historique enregistré dans ce navigateur."}
+if(/^(tu peux m aider|peux tu m aider|j ai besoin d aide|aide moi|j ai une question)\b/.test(t))return "Bien sûr, je t’écoute. Dis-moi ce dont tu as besoin.";
+if(/^(merci|merci beaucoup|je te remercie)\b/.test(t))return "Avec plaisir ! N’hésite pas si tu as d’autres questions.";
+if(/^(ca va bien|ca va|je vais bien|tres bien|super)$/.test(t))return "Content de l’entendre ! Que veux-tu apprendre aujourd’hui ?";
+if(/^(de rien|avec plaisir|je t en prie)$/.test(t))return "Merci à toi !";
+if(/^(pardon|desole|excuse moi)\b/.test(t))return "Aucun souci, ce n’est pas grave.";
+if(/^(bonne nuit)\b/.test(t))return "Bonne nuit ! Repose-toi bien.";
+if(/^(au revoir|a bientot|a demain|bye|ciao)\b/.test(t))return "Au revoir ! À bientôt.";
+if(/(quelle heure|l heure|heure est il)/.test(t))return "Il est "+d.getHours()+"h"+String(d.getMinutes()).padStart(2,"0")+" (selon l’horloge de ton appareil).";
+if(/(quel jour|la date|on est le combien|quelle date)/.test(t))return "Nous sommes "+JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()]+" "+d.getFullYear()+".";
+if(/^(explique|explique moi|peux tu expliquer|detaille|developpe|je veux comprendre)$/.test(t))return "Bien sûr. Dis-moi précisément ce que tu veux que j’explique, et je vais détailler cela simplement avec un exemple si possible.";
+return calc(q)}
+const INSTR="Tu es Novi IA, un assistant virtuel francophone spécialisé en électrotechnique, créé par un électrotechnicien (ne donne son nom que si on te le demande explicitement). Réponds en français simple, clair et court (écran de téléphone), sans Markdown. Sois poli et encourageant. Comprends l'intention de la question même si elle est mal formulée. Si tu ne sais pas, dis-le sans inventer. Rappelle la sécurité seulement quand le risque est réel. Si on te demande qui est ton créateur, réponds : Edison Ahodede, électrotechnicien. Tu enseignes aussi les énergies renouvelables, les centrales et systèmes énergétiques, la programmation (Python, HTML), la culture générale, la politesse et les salutations. Notre objectif : être une vraie assistante IA francophone qui aide à apprendre l’électrotechnique, le solaire, les énergies renouvelables, le code et la culture générale, avec politesse et mémoire. Ton créateur est un électrotechnicien qui rêve de bâtir quelque chose de plus grand ; reste fidèle à ce but.";
+let hist=store.history.slice(-20).map(x=>({role:x.role,content:x.content})),sample=null,busy=false;
+const chat=$("chat");
+function add(c,txt){const d=document.createElement("div");d.className="b "+c;d.textContent=txt;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
+function restoreHistory(){const prior=store.history.slice(-30);for(const item of prior){if(item.role==="user")add("m",item.content);else if(item.role==="assistant")add("e",item.content)}if(prior.length)add("e","J’ai retrouvé une partie de notre conversation précédente dans la mémoire de ce navigateur.")}
+function record(role,content){if(role==="assistant")speak(content);hist.push({role,content});if(hist.length>40)hist=hist.slice(-40);addHistory(role,content)}
+function isExplainRequest(q){return /^(explique|explique moi|explique nous|peux tu expliquer|peux tu m expliquer|detaille|developpe|comment fonctionne|comment marche|pourquoi|aide moi a comprendre|je veux comprendre)\b/.test(N(q))}
+let voiceOn=false;try{voiceOn=localStorage.getItem("edison_voice")==="1"}catch(e){}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,listening=false;
+function paintVoice(){$("spk").textContent=voiceOn?"🔊":"🔇";$("spk").setAttribute("aria-label",voiceOn?"Couper la voix de Novi":"Activer la voix de Novi");$("mic").textContent=listening?"🔴":"🎤"}
+function setVoice(v){voiceOn=v;try{localStorage.setItem("edison_voice",v?"1":"0")}catch(e){}if(!v&&window.speechSynthesis)speechSynthesis.cancel();paintVoice()}
+function speak(txt){if(!voiceOn||!window.speechSynthesis)return;const s=String(txt).replace(/\(Source[^)]*\)/g,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").replace(/[•\n]+/g,". ").replace(/ahod[eéè]d[eéè]/gi,"Aodédè").trim();if(!s)return;spokeAt=Date.now();speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang="fr-FR";const v=speechSynthesis.getVoices().find(x=>/^fr/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}
+/* ===== APPEL VOCAL EN DIRECT : tu parles, Novi répond à voix haute, puis t'écoute à nouveau ===== */
+let callOn=false,callRec=null,callSilent=0,callLock=null,spokeAt=0;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function callStatus(t){$("callStat").textContent=t}
+async function callWaitSpeech(){await sleep(300);const t0=Date.now();while(callOn&&window.speechSynthesis&&(speechSynthesis.speaking||speechSynthesis.pending)&&Date.now()-t0<120000)await sleep(200)}
+function callStart(){
+ if(callOn)return;
+ if(!SR||!window.speechSynthesis){add("e","L’appel vocal demande Chrome sur Android (reconnaissance vocale et voix). Ce navigateur ne le permet pas.");return}
+ setVoice(true);callOn=true;callSilent=0;$("callBar").hidden=false;callStatus("📞 Appel en cours…");$("call").textContent="📵";
+ try{if(navigator.wakeLock)navigator.wakeLock.request("screen").then(l=>{callLock=l}).catch(()=>{})}catch(e){}
+ speak("Je t’écoute.");callWaitSpeech().then(callListen)}
+async function callEnd(msg,say){if(!callOn)return;callOn=false;try{callRec&&callRec.abort()}catch(e){}try{callLock&&callLock.release()}catch(e){}callLock=null;
+ $("callBar").hidden=true;$("call").textContent="📞";if(msg){add("e",msg);if(say)speak(msg)}}
+function callListen(){
+ if(!callOn)return;if(busy){setTimeout(callListen,300);return}
+ callStatus("🎤 Je t’écoute… parle");let got=false;const r=new SR();callRec=r;r.lang="fr-FR";r.interimResults=false;r.maxAlternatives=1;r.continuous=false;
+ r.onresult=e=>{const txt=((e.results[0]&&e.results[0][0]&&e.results[0][0].transcript)||"").trim();if(!txt)return;got=true;callSilent=0;callHandle(txt)};
+ r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed")callEnd("Le micro est bloqué. Autorise-le dans les réglages du navigateur.");else if(e.error==="network")callEnd("Pas de connexion : la reconnaissance vocale a besoin d’Internet.")};
+ r.onend=()=>{if(!callOn||got)return;callSilent++;if(callSilent>=6){callEnd("Appel terminé : je n’entends plus rien.");return}setTimeout(callListen,350)};
+ try{r.start()}catch(e){setTimeout(callListen,500)}}
+async function callHandle(txt){const t=N(txt);
+ if(t==="stop"||/^(raccroche|au revoir|fin de l appel|termine l appel|arrete l appel|on arrete|c est tout)\b/.test(t)){await callEnd("D’accord, à bientôt !",true);return}
+ callStatus("💭 Je réfléchis…");while(busy&&callOn)await sleep(200);if(!callOn)return;
+ const before=spokeAt;await ask(txt);await sleep(300);if(!callOn)return;
+ if(spokeAt<=before){const last=chat.lastElementChild;if(last&&last.classList&&last.classList.contains("e")){const b=last.querySelector("b"),msg=last.querySelector("svg")?(b?b.textContent:"Schéma")+". Regarde le schéma à l’écran.":last.textContent;speak(String(msg).slice(0,500))}}
+ callStatus("🔊 Novi répond… (touche Couper pour passer)");await callWaitSpeech();callListen()}
+$("call").addEventListener("click",()=>{callOn?callEnd("Appel terminé."):callStart()});
+$("callEnd").addEventListener("click",()=>callEnd("Appel terminé."));
+$("callCut").addEventListener("click",()=>{if(window.speechSynthesis)speechSynthesis.cancel()});
+$("spk").addEventListener("click",()=>setVoice(!voiceOn));
+$("mic").addEventListener("click",()=>{
+if(!SR){add("e","La reconnaissance vocale n’est pas disponible sur ce navigateur. Essaie avec Chrome sur Android.");return}
+if(listening){rec&&rec.stop();return}
+if(window.speechSynthesis)speechSynthesis.cancel();
+rec=new SR();rec.lang="fr-FR";rec.interimResults=false;rec.maxAlternatives=1;
+rec.onstart=()=>{listening=true;paintVoice()};
+rec.onend=()=>{listening=false;paintVoice()};
+rec.onerror=e=>{const m={"not-allowed":"Le micro est bloqué. Autorise-le dans les réglages du navigateur.","service-not-allowed":"Le micro est bloqué. Autorise-le dans les réglages du navigateur.","no-speech":"Je n’ai rien entendu. Réessaie en parlant plus près du micro.","network":"La reconnaissance vocale demande une connexion Internet.","audio-capture":"Je ne trouve pas de micro."}[e.error];if(m)add("e",m)};
+rec.onresult=e=>{const txt=e.results[0][0].transcript.trim();if(txt){setVoice(true);ask(txt)}};
+try{rec.start()}catch(e){}
+});
+paintVoice();
+const bx=(x,y,w,h,l)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/><text x="${x+w/2}" y="${y+h/2+4}" text-anchor="middle">${l}</text>`;
+const ln=(a,b,c,d)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}"/>`;
+const tx=(x,y,s,a)=>`<text x="${x}" y="${y}" text-anchor="${a||"middle"}">${s}</text>`;
+const svgW=(w,h,b)=>`<svg viewBox="0 0 ${w} ${h}" role="img" fill="none" stroke="currentColor" stroke-width="1.6" font-size="11" font-family="system-ui,sans-serif"><style>text{fill:currentColor;stroke:none}rect{fill:var(--card)}</style>${b}</svg>`;
+const SCH=[
+{k:["demarrage direct","moteur direct"],t:"Démarrage direct d’un moteur triphasé",
+svg:svgW(340,230,[tx(70,10,"Puissance"),tx(40,26,"L1"),tx(70,26,"L2"),tx(100,26,"L3"),ln(40,30,40,171),ln(70,30,70,171),ln(100,30,100,171),bx(28,50,84,18,"QF"),bx(28,90,84,18,"KM"),bx(28,130,84,18,"FR"),`<circle cx="70" cy="195" r="24"/>`,tx(70,199,"M 3~"),
+tx(260,10,"Commande"),ln(190,30,330,30),tx(180,34,"L1","end"),ln(240,30,240,48),bx(224,48,32,18,"FR"),ln(240,66,240,80),bx(224,80,32,18,"S1"),ln(240,98,240,112),ln(240,112,300,112),ln(240,112,240,124),bx(224,124,32,18,"S2"),ln(240,142,240,158),ln(300,112,300,124),bx(284,124,32,18,"KM"),ln(300,142,300,158),ln(240,158,300,158),ln(270,158,270,170),bx(240,170,60,22,"KM A1-A2"),ln(270,192,270,214),ln(190,214,330,214),tx(180,218,"N","end")].join("")),
+cap:"Schéma simplifié. Puissance : QF disjoncteur, KM contacteur, FR relais thermique, M moteur. Commande : FR (95-96, NF) et S1 arrêt (NF) en série ; S2 marche (NO) avec le contact d’automaintien KM (13-14) en parallèle ; bobine KM (A1-A2). Appui sur S2 : la bobine s’alimente, KM se ferme et son contact maintient l’alimentation. Appui sur S1 : arrêt. À câbler hors tension, par une personne qualifiée, selon la norme en vigueur."},
+{k:["etoile triangle"],t:"Démarrage étoile-triangle (blocs)",
+svg:svgW(340,205,[bx(40,8,80,22,"Réseau 3~"),ln(80,30,80,45),bx(40,45,80,22,"QF"),ln(80,67,80,80),bx(40,80,80,22,"KM1 réseau"),ln(80,102,80,115),bx(40,115,80,22,"FR"),ln(80,137,80,150),bx(20,150,120,40,"Moteur (6 bornes)"),ln(140,160,200,151),ln(140,180,200,183),bx(200,140,120,22,"KM2 : étoile"),bx(200,172,120,22,"KM3 : triangle"),bx(200,60,120,22,"KT temporisateur"),tx(260,100,"commande","middle")].join("")),
+cap:"Schéma simplifié, en blocs. Séquence : 1) KM1 (réseau) et KM2 (étoile) se ferment : le moteur démarre en étoile, avec un courant d’appel divisé par 3. 2) Après le temps réglé sur KT, KM2 s’ouvre. 3) KM3 (triangle) se ferme : le moteur fonctionne en triangle. KM2 et KM3 doivent être verrouillés (contacts NC croisés) : jamais fermés ensemble. La plaque du moteur doit indiquer 400 V en triangle. Bornes : étoile = U2, V2, W2 reliées entre elles ; triangle = U1-W2, V1-U2, W1-V2."},
+{k:["va et vient"],t:"Va-et-vient (une lampe, deux interrupteurs)",
+svg:svgW(340,185,[ln(30,95,70,95),tx(28,99,"L","end"),bx(70,70,60,50,"S1"),ln(130,82,230,82),ln(130,108,230,108),tx(180,76,"voyageur 1"),tx(180,122,"voyageur 2"),bx(230,70,60,50,"S2"),ln(290,95,308,95),`<circle cx="322" cy="95" r="14"/>`,ln(312,85,332,105),ln(332,85,312,105),tx(322,70,"lampe"),ln(322,109,322,160),ln(322,160,30,160),tx(28,164,"N","end")].join("")),
+cap:"Le va-et-vient allume ou éteint une lampe depuis deux endroits. La phase L arrive à la borne commune de S1 ; deux fils « voyageurs » relient S1 à S2 ; la borne commune de S2 va à la lampe ; le neutre N va directement à la lampe. Les interrupteurs coupent toujours la phase, jamais le neutre. Coupe au disjoncteur et vérifie l’absence de tension avant de câbler."},
+{k:["installation solaire","systeme solaire","solaire autonome","photovoltaique","panneaux solaires","panneau solaire"],t:"Système solaire autonome (blocs)",
+svg:svgW(340,250,[bx(30,6,140,24,"Panneaux solaires"),ln(100,30,100,46),bx(30,46,140,24,"Protection DC"),ln(100,70,100,86),bx(30,86,140,24,"Régulateur de charge"),ln(100,110,100,126),bx(30,126,140,24,"Batterie"),ln(100,150,100,166),bx(30,166,140,24,"Protection batterie"),ln(100,190,100,206),bx(30,206,140,24,"Onduleur"),ln(170,98,210,98),bx(210,86,120,24,"Charges DC"),ln(170,218,210,218),bx(210,206,120,24,"Charges 230 V AC")].join("")),
+cap:"Système solaire autonome, en blocs : panneaux, protection DC, régulateur de charge, batterie, protection, onduleur, puis appareils en 230 V. Les appareils en courant continu se branchent sur la sortie du régulateur. Respecte la polarité (+ rouge, − noir), choisis la section des câbles selon le courant et mets l’installation à la terre."}
+];
+function schemaFor(t){if(!/\b(schema|schemas|dessin|dessine|dessiner|circuit|cablage|branchement|montage|plan)\b/.test(t))return null;const sol=schemaSolaire(t);if(sol)return sol;const se=schemaElecFor(t);if(se)return se;const s=SCH.find(x=>x.k.some(k=>has(t,k)));if(s)return s;if(/\b(schema|schemas|dessin|dessine|dessiner)\b/.test(t))return {t:"",svg:"",cap:"Je peux te montrer ces schémas : démarrage direct, étoile-triangle, va-et-vient et installation solaire. Lequel veux-tu ?"};return null}
+async function rechercheEnLigne(q){
+const s=q.replace(/[?!.]/g," ").replace(/^\s*(c est quoi|c’est quoi|qu est ce que|qu’est-ce que|qui est|qui était|explique[- ]moi|parle[- ]moi de)\s+/i,"").trim();
+const j=await (await fetch("https://fr.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=1&srsearch="+encodeURIComponent(s))).json();
+const hit=j.query&&j.query.search&&j.query.search[0];if(!hit)return null;
+const p=await (await fetch("https://fr.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(hit.title))).json();
+return p.extract?p.extract+"\n\n(Source : Wikipédia — "+hit.title+")":null}
+async function ask(q){if(busy||!q.trim())return;busy=true;add("m",q);record("user",q);const t=N(q);
+try{const sch=schemaFor(t);if(sch){const d=add("e",sch.cap);if(sch.svg){d.style.whiteSpace="normal";d.innerHTML="<b>"+sch.t+"</b>"+sch.svg+"<div style=\"margin-top:6px;font-size:.9rem\">"+sch.cap+"</div>"}record("assistant",(sch.t?sch.t+". ":"")+sch.cap);return}let r=comRepondre(q)||physSolve(q)||lytebRepondre(q)||local(q)||rememberedKnowledge(q);if(r){add("e",r);record("assistant",r);return}
+ const personal=memoryContext();let ctx=kb(t);if(ctx&&isExplainRequest(q))ctx=developper(q,ctx);
+ if(ctx&&!sample){add("e",ctx);record("assistant",ctx);return}
+ const bub=add("e","Je prépare une réponse…");
+ if(sample){try{const msgs=hist.slice(-8).concat([{role:"user",content:INSTR+(personal?"\n\nMémoire enregistrée :\n"+personal:"")+(ctx?"\n\nConnaissance utile : "+ctx:"")+"\n\nRéponds à cette demande en tenant compte du contexte : "+q}]);const out=await sample(msgs,{cache:false,onText:({text})=>{if(text)bub.textContent=text;chat.scrollTop=chat.scrollHeight}});if(out&&out.text&&out.text.trim()){bub.textContent=out.text;record("assistant",bub.textContent);return}}catch(e){if(e&&e.code==="not_granted")sample=null}}
+ bub.textContent="Je recherche dans des sources en ligne…";try{const wiki=await rechercheEnLigne(q);bub.textContent=wiki||ctx||"Je n’ai pas trouvé de réponse fiable. Essaie de reformuler ta question ou ajoute des informations à ma mémoire."}catch(e){bub.textContent=ctx||"Je n’ai pas pu joindre les sources en ligne. Vérifie ta connexion. Je peux répondre aux questions présentes dans ma base locale."}record("assistant",bub.textContent);
+}catch(err){add("e","Désolé, une erreur m’a empêché de répondre correctement. Réessaie avec une formulation plus simple.");console.error("Erreur Novi IA :",err)}finally{busy=false}}
+
+/* ===== LECTURE D'UNE PHOTO (OCR) : texte imprimé, Internet requis la 1re fois ===== */
+let ocrBusy=false;
+function chargerOCR(){return new Promise((ok,ko)=>{if(window.Tesseract)return ok();const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";s.onload=ok;s.onerror=()=>ko(new Error("chargement"));document.head.appendChild(s)})}
+function reduireImage(file){return new Promise(ok=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1800/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>ok(b||file),"image/jpeg",.92)};im.onerror=()=>{URL.revokeObjectURL(u);ok(file)};im.src=u})}
+async function lireImage(file){
+ if(ocrBusy||!file)return;ocrBusy=true;
+ const bub=add("e","📷 Photo reçue. Je prépare la lecture du texte…");
+ try{
+  await chargerOCR();
+  const img=await reduireImage(file);
+  bub.textContent="📷 Lecture du texte en cours… 0 %";
+  const r=await Tesseract.recognize(img,"fra",{logger:m=>{if(m.status==="recognizing text")bub.textContent="📷 Lecture du texte en cours… "+Math.round(m.progress*100)+" %"}});
+  const txt=(r.data.text||"").replace(/\s+/g," ").trim();
+  if(txt.length<8){bub.textContent="Je n’ai pas réussi à lire de texte sur cette photo. Essaie avec une photo bien éclairée, bien droite et nette, ou écris l’énoncé.";record("assistant",bub.textContent);return}
+  bub.textContent="📷 Texte lu :\n« "+txt+" »\n\nVérifie surtout les nombres et les unités : une erreur de lecture donne un faux résultat. Corrige si besoin dans la zone de texte, puis appuie sur Envoyer.";
+  $("q").value=txt;ajusterQ();$("q").focus()
+ }catch(e){bub.textContent="Je n’ai pas pu lire la photo. La lecture d’image a besoin d’Internet la première fois. Vérifie ta connexion et réessaie.";console.error(e)}
+ finally{ocrBusy=false;$("img").value=""}}
+$("cam").addEventListener("click",()=>$("img").click());
+$("img").addEventListener("change",e=>lireImage(e.target.files&&e.target.files[0]));
+$("f").addEventListener("submit",e=>{e.preventDefault();const v=$("q").value;$("q").value="";ajusterQ();ask(v)});
+function ajusterQ(){const z=$("q");z.style.height="auto";z.style.height=Math.min(z.scrollHeight,Math.round(window.innerHeight*.5))+"px"}
+$("q").addEventListener("input",ajusterQ);
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();if($("f").requestSubmit)$("f").requestSubmit();else $("f").dispatchEvent(new Event("submit",{cancelable:true}))}});
+["Comment produire du courant ?","Règles de salutation","Raconte une blague 😄"].forEach(label=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>ask(label);$("chips").appendChild(b)});
+/* ===== COMPTES SUR CE TÉLÉPHONE (mot de passe haché avec PBKDF2, jamais en clair) ===== */
+const B64={e:u=>btoa(String.fromCharCode(...u)),d:s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+function usersGet(){try{return JSON.parse(localStorage.getItem("edison_users")||"{}")||{}}catch(e){return {}}}
+function usersSet(u){try{localStorage.setItem("edison_users",JSON.stringify(u));return true}catch(e){return false}}
+async function pwHash(pw,salt,it){const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);return B64.e(new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:it,hash:"SHA-256"},k,256)))}
+function sameStr(a,b){if(a.length!==b.length)return false;let r=0;for(let i=0;i<a.length;i++)r|=a.charCodeAt(i)^b.charCodeAt(i);return r===0}
+let authMode="create";
+function authView(mode){authMode=mode;$("authHome").hidden=true;$("authForm").hidden=false;$("aErr").textContent="";$("authTitle").textContent=mode==="create"?"Créer un compte":"Se connecter";$("lName").hidden=mode!=="create";$("aGo").textContent=mode==="create"?"Créer mon compte":"Me connecter";$("aPass").autocomplete=mode==="create"?"new-password":"current-password"}
+async function authGo(){const err=$("aErr");err.textContent="";const mail=$("aMail").value.trim().toLowerCase(),pw=$("aPass").value,name=$("aName").value.trim().replace(/\s+/g," ");
+ if(!window.crypto||!crypto.subtle){err.textContent="Ce navigateur ne permet pas de protéger le mot de passe. Ouvre Novi IA avec Chrome, via le lien sécurisé (https).";return}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)){err.textContent="Entre une adresse e-mail valide.";return}
+ $("aGo").disabled=true;
+ try{const users=usersGet();
+  if(authMode==="create"){
+   if(!name){err.textContent="Entre ton nom ou ton pseudonyme.";return}
+   if(pw.length<6){err.textContent="Le mot de passe doit contenir au moins 6 caractères.";return}
+   if(users[mail]){err.textContent="Un compte existe déjà avec cet e-mail. Connecte-toi.";return}
+   const first=Object.keys(users).length===0,salt=crypto.getRandomValues(new Uint8Array(16)),it=150000;
+   users[mail]={name,salt:B64.e(salt),it,hash:await pwHash(pw,salt,it),created:Date.now()};
+   if(!usersSet(users)){err.textContent="Impossible d’enregistrer le compte : le stockage du navigateur est bloqué.";return}
+   if(first){try{const old=localStorage.getItem("edison_ia_memory_v2");if(old)localStorage.setItem("edison_ia_memory_v2:u:"+mail,old)}catch(e){}}
+  }else{const u=users[mail];
+   if(!u||!sameStr(await pwHash(pw,B64.d(u.salt),u.it),u.hash)){err.textContent="E-mail ou mot de passe incorrect.";return}}
+  localStorage.setItem("edison_session",mail);try{sessionStorage.setItem("edison_welcome","full")}catch(e){}location.reload()
+ }catch(e){err.textContent="Une erreur est survenue. Réessaie."}finally{$("aGo").disabled=false}}
+function accountInit(){
+ if(SESSION_ID){const u=usersGet()[SESSION_ID];
+  if(!u){try{localStorage.removeItem("edison_session")}catch(e){}if(!sessionStorage.getItem("edison_retry")){sessionStorage.setItem("edison_retry","1");location.reload()}return}
+  const nm=u.name;$("who").hidden=false;$("whoName").textContent="👤 "+nm;
+  let msg=null;try{if(sessionStorage.getItem("edison_welcome")==="full"){sessionStorage.removeItem("edison_welcome");msg="Bienvenue sur Novi IA, "+nm+" ! 👋\n\nJe suis là pour t’aider à comprendre tes cours, résoudre tes exercices et développer tes connaissances.\n\nAlors, "+nm+", qu’aimerais-tu apprendre aujourd’hui ?"}
+   else if(!sessionStorage.getItem("edison_greeted"))msg="Content de te revoir sur Novi IA, "+nm+" ! 👋\n\nQu’aimerais-tu apprendre aujourd’hui ?";sessionStorage.setItem("edison_greeted","1")}catch(e){}
+  if(msg)add("e",msg);return}
+ let guest=false;try{guest=sessionStorage.getItem("edison_guest")==="1"}catch(e){}
+ if(!guest)$("auth").hidden=false}
+$("goCreate").addEventListener("click",()=>authView("create"));$("goLogin").addEventListener("click",()=>authView("login"));
+$("goGuest").addEventListener("click",()=>{try{sessionStorage.setItem("edison_guest","1")}catch(e){}$("auth").hidden=true});
+$("aBack").addEventListener("click",()=>{$("authForm").hidden=true;$("authHome").hidden=false});
+$("aGo").addEventListener("click",authGo);$("aShow").addEventListener("change",e=>{$("aPass").type=e.target.checked?"text":"password"});
+["aName","aMail","aPass"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();authGo()}}));
+$("logout").addEventListener("click",()=>{try{localStorage.removeItem("edison_session");sessionStorage.removeItem("edison_greeted");sessionStorage.removeItem("edison_guest")}catch(e){}location.reload()});
+restoreHistory();if(!store.history.length&&!SESSION_ID)add("e","Bonjour ! Je suis Novi IA, assistant francophone créé par son créateur. Je peux discuter, expliquer, calculer et retenir les informations que tu me demandes de mémoriser. Essaie une question ci-dessous.");
+accountInit();
+$("showMemory").addEventListener("click",()=>{renderMemory();$("memoryView").hidden=!$("memoryView").hidden});
+$("exportMemory").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(store,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="novi_memoire.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+$("clearMemory").addEventListener("click",()=>{if(confirm("Effacer l’historique et les mémoires enregistrées dans ce navigateur ?")){store=emptyStore();saveStore();chat.innerHTML="";hist=[];add("e","Mémoire effacée. Nous pouvons repartir sur de nouvelles bases.");renderMemory()}});
+renderMemory();try{if(window.claude&&claude.use)claude.use("sample").then(s=>{sample=s||null}).catch(()=>{})}catch(e){}
+</script>
+<script>if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("sw.js").catch(function(){});</script>
+</body>
+</html>
